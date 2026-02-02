@@ -44,13 +44,57 @@ class CartController extends Controller
         return redirect()->back()->with('success', 'Juego agregado al carrito exitosamente.');
     }
 
-    // Procesa la compra (Limpiar carrito)
+    // Eliminar item del carrito
+    public function remove($id)
+    {
+        $cart = session()->get('cart');
+        
+        if(isset($cart[$id])) {
+            unset($cart[$id]);
+            session()->put('cart', $cart);
+            
+            return redirect()->back()->with('success', 'Juego eliminado del carrito');
+        }
+        
+        return redirect()->back()->with('error', 'Juego no encontrado en el carrito');
+    }
+
+    // Actualizar cantidad
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:1|max:10'
+        ]);
+        
+        $cart = session()->get('cart');
+        
+        if(isset($cart[$id])) {
+            $cart[$id]['quantity'] = $request->quantity;
+            session()->put('cart', $cart);
+            
+            return redirect()->back()->with('success', 'Cantidad actualizada');
+        }
+        
+        return redirect()->back()->with('error', 'Juego no encontrado en el carrito');
+    }
+
+    // Vaciar carrito completo
+    public function clear()
+    {
+        session()->forget('cart');
+        return redirect()->route('cart.index')->with('success', 'Carrito vaciado correctamente');
+    }
+    
+    // Procesa la compra (Redirige al nuevo checkout)
     public function checkout()
     {
-        // Borramos la clave 'cart' de la sesión
-        session()->forget('cart');
-
-        // Retornamos la vista de confirmación
-        return view('checkout.success');
+        $cart = session()->get('cart', []);
+        
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'Tu carrito está vacío.');
+        }
+        
+        // Redirigir al nuevo checkout con métodos de pago
+        return redirect()->route('checkout');
     }
 }

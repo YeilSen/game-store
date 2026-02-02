@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BanController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GameController; 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController; 
 
 /*
@@ -24,7 +25,16 @@ Route::middleware('auth')->group(function () {
     // Carrito de compras
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index'); 
     Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    
+    // Nuevas rutas para gestión del carrito
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    
+    // Checkout y pagos
+    Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout');
+    Route::post('/checkout/process', [CheckoutController::class, 'processPayment'])->name('checkout.process');
+    Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 
     // Perfil de usuario 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -34,9 +44,7 @@ Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->name('dashboard'); // 🚨 HE QUITADO ->middleware(['verified']) TEMPORALMENTE AQUÍ 🚨
-
-    
+    })->name('dashboard');
 });
 
 /*
@@ -53,10 +61,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users', [AdminController::class, 'index'])->name('users.index');
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
 
-    // Logs de sesión 🔑 CORREGIDO: Usar AdminController y el método viewLoginLogs
+    // Logs de sesión
     Route::get('/logs', [AdminController::class, 'viewLoginLogs'])->name('logs.index');
     
-    // 🔑 NUEVAS RUTAS PARA EL CONTROL DE BANEO 🔑
+    // Control de baneo
     Route::get('/bans', [BanController::class, 'index'])->name('bans.index');
     Route::post('/bans/unban', [BanController::class, 'unban'])->name('bans.unban');
 });
