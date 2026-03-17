@@ -93,9 +93,40 @@
                                 background: linear-gradient(to bottom, transparent 50%, rgba(15, 23, 42, 0.8));
                                 opacity: 0.5;
                              "></div>
+                        
+                        {{-- 🔥 NUEVO: Mostrar estado en la imagen --}}
+                        @if($game->status == 'out_of_stock')
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge" style="background: rgba(239, 68, 68, 0.9); color: white; padding: 5px 10px; border-radius: 6px;">
+                                    AGOTADO
+                                </span>
+                            </div>
+                        @elseif($game->status == 'discontinued')
+                            <div class="position-absolute top-0 start-0 m-3">
+                                <span class="badge" style="background: rgba(100, 116, 139, 0.9); color: white; padding: 5px 10px; border-radius: 6px;">
+                                    DESCONTINUADO
+                                </span>
+                            </div>
+                        @endif
                     </div>
                     
                     <div class="card-body d-flex flex-column p-4">
+                        {{-- 🔥 NUEVO: Categoría --}}
+                        @if($game->category)
+                            <div class="mb-2">
+                                <span class="badge" style="
+                                    background: rgba(34, 211, 238, 0.1);
+                                    color: #22d3ee;
+                                    border: 1px solid rgba(34, 211, 238, 0.3);
+                                    padding: 4px 10px;
+                                    border-radius: 20px;
+                                    font-size: 0.8rem;
+                                ">
+                                    <i class="bi bi-tag me-1"></i> {{ $game->category }}
+                                </span>
+                            </div>
+                        @endif
+                        
                         <h5 class="card-title mb-3" style="
                             color: #e2e8f0;
                             font-weight: 700;
@@ -113,34 +144,125 @@
                             {{ Str::limit($game->description, 100) }}
                         </p>
                         
-                        <p class="card-text mb-4" style="
-                            background: linear-gradient(45deg, #22d3ee, #6366f1);
-                            -webkit-background-clip: text;
-                            background-clip: text;
-                            color: transparent;
-                            font-weight: 800;
-                            font-size: 1.1rem;
-                        ">
-                            <strong>Precio: ${{ number_format($game->price, 2) }}</strong>
-                        </p>
+                        {{-- 🔥 NUEVO: Precio con descuento --}}
+                        <div class="mb-4">
+                            @if($game->has_discount)
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <span class="text-decoration-line-through text-muted me-2" style="color: #94a3b8 !important;">
+                                            ${{ number_format($game->price, 2) }}
+                                        </span>
+                                        <span class="badge" style="
+                                            background: linear-gradient(45deg, #ef4444, #dc2626);
+                                            color: white;
+                                            padding: 4px 8px;
+                                            border-radius: 6px;
+                                            font-size: 0.8rem;
+                                        ">
+                                            -{{ $game->discount_percent }}%
+                                        </span>
+                                    </div>
+                                    <span style="
+                                        background: linear-gradient(45deg, #22d3ee, #6366f1);
+                                        -webkit-background-clip: text;
+                                        background-clip: text;
+                                        color: transparent;
+                                        font-weight: 800;
+                                        font-size: 1.2rem;
+                                    ">
+                                        ${{ number_format($game->final_price, 2) }}
+                                    </span>
+                                </div>
+                            @else
+                                <p class="card-text mb-0" style="
+                                    background: linear-gradient(45deg, #22d3ee, #6366f1);
+                                    -webkit-background-clip: text;
+                                    background-clip: text;
+                                    color: transparent;
+                                    font-weight: 800;
+                                    font-size: 1.2rem;
+                                    text-align: right;
+                                ">
+                                    <strong>${{ number_format($game->price, 2) }}</strong>
+                                </p>
+                            @endif
+                        </div>
+                        
+                        {{-- 🔥 NUEVO: Botones de Admin (dentro de cada juego) --}}
+                        @auth
+                            @if(Auth::user()->is_admin)
+                                <div class="d-flex gap-2 mb-3">
+                                    {{-- Botón Editar --}}
+                                    <a href="{{ route('admin.games.edit', $game->id) }}" 
+                                       class="btn w-50" 
+                                       style="
+                                            background: linear-gradient(45deg, #22d3ee, #6366f1);
+                                            border: none;
+                                            color: #0f172a;
+                                            font-weight: 600;
+                                            padding: 8px;
+                                            border-radius: 8px;
+                                            transition: all 0.3s ease;
+                                            font-size: 0.9rem;
+                                        ">
+                                        <i class="bi bi-pencil-square me-1"></i> Editar
+                                    </a>
+                                    
+                                    {{-- Botón Eliminar --}}
+                                    <form action="{{ route('admin.games.delete', $game->id) }}" method="POST" class="w-50">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="btn w-100" 
+                                                style="
+                                                    background: rgba(239, 68, 68, 0.1);
+                                                    border: 1px solid rgba(239, 68, 68, 0.3);
+                                                    color: #fca5a5;
+                                                    font-weight: 600;
+                                                    padding: 8px;
+                                                    border-radius: 8px;
+                                                    transition: all 0.3s ease;
+                                                    font-size: 0.9rem;
+                                                "
+                                                onclick="return confirm('¿Eliminar este juego?')">
+                                            <i class="bi bi-trash me-1"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        @endauth
                         
                         {{-- Formulario para agregar al carrito --}}
                         @auth
-                            <form action="{{ route('cart.add', $game->id) }}" method="POST" class="mt-auto">
-                                @csrf
-                                <button type="submit" class="btn w-100" style="
-                                    background: linear-gradient(45deg, #10b981, #22c55e);
+                            @if($game->status == 'available')
+                                <form action="{{ route('cart.add', $game->id) }}" method="POST" class="mt-auto">
+                                    @csrf
+                                    <button type="submit" class="btn w-100" style="
+                                        background: linear-gradient(45deg, #10b981, #22c55e);
+                                        border: none;
+                                        color: white;
+                                        font-weight: 600;
+                                        padding: 12px;
+                                        border-radius: 8px;
+                                        transition: all 0.3s ease;
+                                        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+                                    ">
+                                        <i class="bi bi-cart-plus me-2"></i> Añadir al Carrito
+                                    </button>
+                                </form>
+                            @else
+                                <button class="btn w-100 mt-auto" disabled style="
+                                    background: rgba(100, 116, 139, 0.3);
                                     border: none;
-                                    color: white;
+                                    color: #94a3b8;
                                     font-weight: 600;
                                     padding: 12px;
                                     border-radius: 8px;
-                                    transition: all 0.3s ease;
-                                    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+                                    cursor: not-allowed;
                                 ">
-                                    Añadir al Carrito
+                                    <i class="bi bi-cart-x me-2"></i> No disponible
                                 </button>
-                            </form>
+                            @endif
                         @else
                             <a href="{{ route('login') }}" class="btn btn-outline-secondary w-100 mt-auto" style="
                                 background: transparent;
@@ -151,7 +273,7 @@
                                 border-radius: 8px;
                                 transition: all 0.3s ease;
                             ">
-                                Inicia Sesión para comprar
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Inicia Sesión
                             </a>
                         @endauth
                     </div>
@@ -165,6 +287,20 @@
                 <h4 class="mb-3" style="color: #cbd5e1;">
                     No hay juegos disponibles en este momento.
                 </h4>
+                @auth
+                    @if(Auth::user()->is_admin)
+                        <a href="{{ route('admin.games.create') }}" class="btn mt-3" style="
+                            background: linear-gradient(45deg, #22d3ee, #6366f1);
+                            border: none;
+                            color: #0f172a;
+                            font-weight: 600;
+                            padding: 10px 20px;
+                            border-radius: 8px;
+                        ">
+                            <i class="bi bi-plus-circle me-2"></i> Crear Primer Juego
+                        </a>
+                    @endif
+                @endauth
             </div>
         @endforelse
     </div>

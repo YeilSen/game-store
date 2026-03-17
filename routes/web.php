@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index'); 
     Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
     
-    // Nuevas rutas para gestión del carrito
+    // Rutas para gestión del carrito
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
@@ -53,20 +53,36 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Gestión de juegos
+
+    // Juegos
+    Route::get('/games', [AdminController::class, 'listGames'])->name('games.index');
+
     Route::get('/games/create', [AdminController::class, 'createGame'])->name('games.create');
+
     Route::post('/games', [AdminController::class, 'storeGame'])->name('games.store');
-    
-    // Gestión de usuarios
+
+    Route::get('/games/{id}/edit', [AdminController::class, 'editGame'])->name('games.edit');
+
+    Route::put('/games/{id}', [AdminController::class, 'updateGame'])->name('games.update');
+
+    Route::delete('/games/{id}', [AdminController::class, 'destroy'])->name('games.delete');
+
+
+    // Usuarios
     Route::get('/users', [AdminController::class, 'index'])->name('users.index');
+
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
 
-    // Logs de sesión
+
+    // Logs
     Route::get('/logs', [AdminController::class, 'viewLoginLogs'])->name('logs.index');
-    
-    // Control de baneo
+
+
+    // Baneos
     Route::get('/bans', [BanController::class, 'index'])->name('bans.index');
+
     Route::post('/bans/unban', [BanController::class, 'unban'])->name('bans.unban');
+
 });
 
 /*

@@ -390,13 +390,185 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
     <script>
-        // Agregar animación a los elementos del navbar al cargar
+        // =====================================================
+        // 🔥 ANIMACIONES DEL NAVBAR 🔥
+        // =====================================================
         document.addEventListener('DOMContentLoaded', function() {
             const navLinks = document.querySelectorAll('.nav-link');
             navLinks.forEach((link, index) => {
                 link.style.animationDelay = `${index * 0.1}s`;
             });
         });
+
+        // =====================================================
+        // 🔥 PROTECCIÓN CONTRA DOBLE CLIC (TODO EL SISTEMA) 🔥
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // =====================================================
+            // 1️⃣ PROTEGER TODOS LOS FORMULARIOS
+            // =====================================================
+            const forms = document.querySelectorAll('form');
+            
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    
+                    // Buscar el botón submit dentro de este formulario
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    
+                    if (submitButton) {
+                        // Verificar si ya está deshabilitado (para evitar loops)
+                        if (submitButton.disabled) {
+                            e.preventDefault();
+                            return false;
+                        }
+                        
+                        // Guardar el texto original (para restaurarlo después)
+                        if (!submitButton.hasAttribute('data-original-text')) {
+                            submitButton.setAttribute('data-original-text', submitButton.innerHTML);
+                        }
+                        
+                        const originalText = submitButton.innerHTML;
+                        
+                        // Deshabilitar el botón
+                        submitButton.disabled = true;
+                        
+                        // Cambiar el texto (con icono de carga de Bootstrap)
+                        submitButton.innerHTML = `
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Procesando...
+                        `;
+                        
+                        // Mantener el estilo original (para no perder el diseño)
+                        submitButton.style.opacity = '0.8';
+                        submitButton.style.cursor = 'not-allowed';
+                        
+                        // Agregar clase para estilos adicionales
+                        submitButton.classList.add('btn-processing');
+                        
+                        // Opcional: Re-habilitar después de 5 segundos (solo si hay error)
+                        // Esto es útil si el servidor tarda o si algo falla
+                        setTimeout(() => {
+                            if (submitButton.disabled) {
+                                submitButton.disabled = false;
+                                submitButton.innerHTML = submitButton.getAttribute('data-original-text') || originalText;
+                                submitButton.style.opacity = '1';
+                                submitButton.style.cursor = 'pointer';
+                                submitButton.classList.remove('btn-processing');
+                            }
+                        }, 5000);
+                    }
+                });
+            });
+            
+            // =====================================================
+            // 2️⃣ PROTEGER ENLACES PELIGROSOS
+            // (como eliminar, vaciar carrito, etc.)
+            // =====================================================
+            const dangerousLinks = document.querySelectorAll('a[onclick*="confirm"], a.delete-link, .btn-danger, [data-confirm]');
+            
+            dangerousLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.classList.contains('disabled')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    this.classList.add('disabled');
+                    this.style.opacity = '0.6';
+                    this.style.pointerEvents = 'none';
+                    
+                    // Si el enlace tiene confirmación, esperamos
+                    if (this.hasAttribute('onclick') && this.getAttribute('onclick').includes('confirm')) {
+                        // No hacemos nada, la confirmación ya maneja
+                    } else {
+                        // Re-habilitar después de 2 segundos
+                        setTimeout(() => {
+                            this.classList.remove('disabled');
+                            this.style.opacity = '1';
+                            this.style.pointerEvents = 'auto';
+                        }, 2000);
+                    }
+                });
+            });
+        });
+
+        // =====================================================
+        // 🔥 FUNCIÓN GLOBAL PARA RE-HABILITAR BOTONES (útil para AJAX)
+        // =====================================================
+        window.enableSubmitButtons = function(formId) {
+            const form = document.getElementById(formId);
+            if (form) {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = btn.getAttribute('data-original-text') || 'Enviar';
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    btn.classList.remove('btn-processing');
+                }
+            }
+        };
+
+        // =====================================================
+        // 🔥 FUNCIÓN PARA DESHABILITAR BOTÓN MANUALMENTE
+        // =====================================================
+        window.disableSubmitButton = function(formId, message = 'Procesando...') {
+            const form = document.getElementById(formId);
+            if (form) {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn) {
+                    if (!btn.hasAttribute('data-original-text')) {
+                        btn.setAttribute('data-original-text', btn.innerHTML);
+                    }
+                    btn.disabled = true;
+                    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> ${message}`;
+                    btn.style.opacity = '0.8';
+                    btn.style.cursor = 'not-allowed';
+                    btn.classList.add('btn-processing');
+                }
+            }
+        };
     </script>
+
+    <style>
+        /* Estilos adicionales para botones en procesamiento */
+        .btn-processing {
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-processing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Estilo para enlaces deshabilitados */
+        .disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Spinner personalizado */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
+    </style>
 </body>
 </html>

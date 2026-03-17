@@ -202,6 +202,11 @@
             text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
         }
         
+        .name-label {
+            color: #06b6d4;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+        
         .submit-btn {
             background: linear-gradient(45deg, 
                 #22d3ee, 
@@ -378,6 +383,26 @@
             text-align: center;
         }
         
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fecaca;
+        }
+        
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #bbf7d0;
+        }
+        
         @media (max-width: 480px) {
             .card {
                 max-width: 100%;
@@ -413,8 +438,38 @@
                 Únete al universo gaming
             </p>
             
+            {{-- Mostrar errores de validación --}}
+            @if ($errors->any())
+                <div class="alert alert-error">
+                    <strong>Error:</strong>
+                    <ul class="mt-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            
+            @if (session('status'))
+                <div class="alert alert-success">
+                    {{ session('status') }}
+                </div>
+            @endif
+            
             <form method="POST" action="{{ route('register') }}">
                 @csrf
+                
+                <!-- Nombre -->
+                <div class="form-group">
+                    <label class="label name-label gaming-font">
+                        NOMBRE DE JUGADOR
+                    </label>
+                    <input type="text" name="name" 
+                        class="input-field email-field"
+                        placeholder="Tu nombre o apodo"
+                        required autofocus
+                        value="{{ old('name') }}">
+                </div>
                 
                 <!-- Email -->
                 <div class="form-group">
@@ -424,7 +479,8 @@
                     <input type="email" name="email" 
                         class="input-field email-field"
                         placeholder="jugador@ejemplo.com"
-                        required autofocus>
+                        required
+                        value="{{ old('email') }}">
                 </div>
                 
                 <!-- Contraseña -->
@@ -436,7 +492,8 @@
                     </div>
                     <input type="password" name="password" 
                         class="input-field password-field"
-                        required>
+                        required
+                        placeholder="Mínimo 8 caracteres">
                     <div class="password-hint">
                         Mínimo 8 caracteres con letras y números
                     </div>
@@ -449,7 +506,8 @@
                     </label>
                     <input type="password" name="password_confirmation" 
                         class="input-field confirm-field"
-                        required>
+                        required
+                        placeholder="Repite tu contraseña">
                 </div>
                 
                 <button type="submit"
@@ -476,5 +534,51 @@
             </div>
         </div>
     </div>
+    
+    <script>
+        // Validación del formulario
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const name = document.querySelector('input[name="name"]').value.trim();
+            const email = document.querySelector('input[name="email"]').value.trim();
+            const password = document.querySelector('input[name="password"]').value;
+            const confirm = document.querySelector('input[name="password_confirmation"]').value;
+            
+            // Validar nombre
+            if (name.length < 2) {
+                e.preventDefault();
+                alert('El nombre debe tener al menos 2 caracteres');
+                return false;
+            }
+            
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                alert('Por favor ingresa un email válido');
+                return false;
+            }
+            
+            // Validar contraseña
+            if (password.length < 8) {
+                e.preventDefault();
+                alert('La contraseña debe tener al menos 8 caracteres');
+                return false;
+            }
+            
+            // Validar que coincidan
+            if (password !== confirm) {
+                e.preventDefault();
+                alert('Las contraseñas no coinciden');
+                return false;
+            }
+            
+            // Mostrar loading en el botón
+            const btn = document.querySelector('.submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = 'CREANDO CUENTA...';
+            
+            return true;
+        });
+    </script>
 </body>
 </html>
