@@ -65,29 +65,26 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table mb-0" style="background: transparent;">
+                            <table class="table mb-0" style="background: transparent !important;">
                                 <thead>
                                     <tr style="
                                         background: rgba(34, 211, 238, 0.05);
                                         border-bottom: 2px solid rgba(99, 102, 241, 0.3);
                                     ">
-                                        <th style="color: #ffffff; font-weight: 700; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">JUEGO</th>
-                                        <th style="color: #ffffff; font-weight: 700; text-align: center; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">PRECIO</th>
-                                        <th style="color: #ffffff; font-weight: 700; text-align: center; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">CANTIDAD</th>
-                                        <th style="color: #ffffff; font-weight: 700; text-align: right; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">SUBTOTAL</th>
+                                        <th style="color: #ffffff !important; font-weight: 700; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">JUEGO</th>
+                                        <th style="color: #ffffff !important; font-weight: 700; text-align: center; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">PRECIO</th>
+                                        <th style="color: #ffffff !important; font-weight: 700; text-align: center; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">CANTIDAD</th>
+                                        <th style="color: #ffffff !important; font-weight: 700; text-align: right; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">SUBTOTAL</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody style="background: transparent !important;">
                                     @foreach($cart as $id => $details)
                                         @php 
                                             $subtotal = $details['price'] * $details['quantity']; 
                                             $total += $subtotal; 
                                         @endphp
-                                        <tr style="
-                                            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
-                                            {{ $loop->even ? 'background: rgba(30, 41, 59, 0.3);' : '' }}
-                                        ">
-                                            <td style="padding: 20px;">
+                                        <tr style="border-bottom: 1px solid rgba(99, 102, 241, 0.1); background: transparent !important;">
+                                            <td style="padding: 20px; background: transparent !important;">
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-shrink-0 me-3">
                                                         <div style="
@@ -103,7 +100,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="flex-grow-1">
-                                                        <h6 style="color: #0a35f4; margin-bottom: 5px; font-weight: 700; font-size: 1rem;">
+                                                        <h6 style="color: #ffffff !important; margin-bottom: 5px; font-weight: 700; font-size: 1rem;">
                                                             {{ $details['name'] }}
                                                         </h6>
                                                         <div class="mt-2">
@@ -136,7 +133,7 @@
                                                                            style="
                                                                                 background: rgba(30, 41, 59, 0.8);
                                                                                 border-color: rgba(99, 102, 241, 0.3);
-                                                                                color: #f91111;
+                                                                                color: #ffffff !important;
                                                                                 text-align: center;
                                                                                 font-weight: 600;
                                                                             ">
@@ -153,8 +150,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td style="text-align: center; padding: 20px; vertical-align: middle;">
+                                              </td>
+                                            <td style="text-align: center; padding: 20px; vertical-align: middle; background: transparent !important;">
                                                 <span style="
                                                     background: linear-gradient(45deg, #22d3ee, #6366f1);
                                                     -webkit-background-clip: text;
@@ -165,8 +162,8 @@
                                                 ">
                                                     ${{ number_format($details['price'], 2) }}
                                                 </span>
-                                            </td>
-                                            <td style="text-align: center; padding: 20px; vertical-align: middle;">
+                                              </td>
+                                            <td style="text-align: center; padding: 20px; vertical-align: middle; background: transparent !important;">
                                                 <span class="badge" style="
                                                     background: rgba(139, 92, 246, 0.2);
                                                     color: #d8b4fe;
@@ -178,8 +175,8 @@
                                                 ">
                                                     {{ $details['quantity'] }}
                                                 </span>
-                                            </td>
-                                            <td style="text-align: right; padding: 20px; vertical-align: middle;">
+                                              </td>
+                                            <td style="text-align: right; padding: 20px; vertical-align: middle; background: transparent !important;">
                                                 <span style="
                                                     color: #22d3ee;
                                                     font-weight: 900;
@@ -188,7 +185,7 @@
                                                 ">
                                                     ${{ number_format($subtotal, 2) }}
                                                 </span>
-                                            </td>
+                                              </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -218,7 +215,7 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-2">
-                                <span style="color: #f0e7e2; font-weight: 500;">Subtotal</span>
+                                <span style="color: #e2e8f0; font-weight: 500;">Subtotal</span>
                                 <span style="color: #ffffff; font-weight: 600;">${{ number_format($total, 2) }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
@@ -258,7 +255,6 @@
                                 Pago 100% seguro con encriptación SSL
                             </div>
                             
-                            {{-- Botón para ir al checkout --}}
                             <a href="{{ route('checkout') }}" class="btn checkout-btn w-100 gaming-font" style="
                                 background: linear-gradient(45deg, #22d3ee, #6366f1, #a855f7);
                                 background-size: 200% 200%;
@@ -392,6 +388,23 @@
         50% { background-position: 100% 50%; }
     }
     
+    /* Forzar fondo oscuro en toda la tabla */
+    .table-responsive,
+    .table,
+    .table thead,
+    .table tbody,
+    .table tr,
+    .table td,
+    .table th {
+        background-color: transparent !important;
+    }
+    
+    /* Forzar colores de texto */
+    .table td,
+    .table th {
+        color: #ffffff !important;
+    }
+    
     /* Efectos hover para botones */
     .btn {
         position: relative;
@@ -404,7 +417,7 @@
     }
     
     /* Botón de volver */
-    a[href="{{ route('catalog') }"]:hover {
+    a[href="{{ route('catalog') }}"]:hover {
         background: rgba(99, 102, 241, 0.2) !important;
         border-color: rgba(34, 211, 238, 0.5) !important;
         transform: translateX(-3px);
@@ -412,7 +425,7 @@
     }
     
     /* Botón vaciar carrito */
-    form[action="{{ route('cart.clear') }"] button:hover {
+    form[action="{{ route('cart.clear') }}"] button:hover {
         background: rgba(239, 68, 68, 0.3) !important;
         border-color: rgba(239, 68, 68, 0.5) !important;
         color: #fecaca !important;
@@ -483,21 +496,6 @@
     .form-control[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
-    }
-    
-    /* Mejorar visibilidad de la tabla */
-    .table-responsive th,
-    .table-responsive td {
-        color: #ffffff !important;
-    }
-    
-    /* Fondo oscuro para filas alternas */
-    tbody tr:nth-child(even) {
-        background-color: rgba(30, 41, 59, 0.3) !important;
-    }
-    
-    tbody tr:nth-child(odd) {
-        background-color: transparent !important;
     }
     
     /* Responsive */

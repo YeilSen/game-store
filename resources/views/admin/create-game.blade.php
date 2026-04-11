@@ -24,20 +24,23 @@
             </div>
 
             {{-- Botón de volver --}}
-            <a href="{{ route('catalog') }}" class="btn mb-4" style="
-                background: rgba(15, 23, 42, 0.7);
-                border: 1px solid rgba(99, 102, 241, 0.3);
-                color: #22d3ee;
-                font-weight: 600;
-                padding: 10px 20px;
-                border-radius: 10px;
-                transition: all 0.3s ease;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-            ">
-                <i class="bi bi-arrow-left"></i> Volver al Catálogo
-            </a>
+            <div class="mb-4">
+                <a href="{{ route('catalog') }}" class="btn" style="
+                    background: rgba(15, 23, 42, 0.7);
+                    border: 1px solid rgba(99, 102, 241, 0.3);
+                    color: #22d3ee;
+                    font-weight: 600;
+                    padding: 10px 20px;
+                    border-radius: 10px;
+                    transition: all 0.3s ease;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    text-decoration: none;
+                ">
+                    <i class="bi bi-arrow-left"></i> Volver al Catálogo
+                </a>
+            </div>
 
             {{-- Mensajes de estado --}}
             @if(session('success'))
@@ -167,7 +170,7 @@
                             ">
                         </div>
 
-                        {{-- ⚡ NUEVO: Campo Categoría --}}
+                        {{-- Campo Categoría --}}
                         <div class="mb-4">
                             <label for="category" class="form-label" style="
                                 color: #22d3ee;
@@ -198,7 +201,7 @@
                             </select>
                         </div>
 
-                        {{-- ⚡ NUEVO: Campo Estado --}}
+                        {{-- Campo Estado --}}
                         <div class="mb-4">
                             <label for="status" class="form-label" style="
                                 color: #a855f7;
@@ -228,7 +231,7 @@
                             </div>
                         </div>
 
-                        {{-- ⚡ NUEVO: Campo Descuento --}}
+                        {{-- Campo Descuento --}}
                         <div class="mb-4">
                             <label for="discount_percent" class="form-label" style="
                                 color: #6366f1;
@@ -329,7 +332,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn w-100 mt-3 gaming-font" style="
+                        <button type="submit" class="btn w-100 mt-3 gaming-font" id="submitBtn" style="
                             background: linear-gradient(45deg, #22d3ee, #6366f1, #a855f7);
                             background-size: 200% 200%;
                             border: none;
@@ -342,6 +345,7 @@
                             position: relative;
                             overflow: hidden;
                             animation: gradientShift 3s ease infinite;
+                            cursor: pointer;
                         ">
                             <i class="bi bi-upload me-2"></i> SUBIR JUEGO
                         </button>
@@ -415,8 +419,9 @@
     
     /* Efecto para botón de volver */
     a.btn:hover {
-        background: rgba(99, 102, 241, 0.1) !important;
-        border-color: rgba(34, 211, 238, 0.5) !important;
+        background: rgba(99, 102, 241, 0.2) !important;
+        border-color: rgba(34, 211, 238, 0.7) !important;
+        color: #67e8f9 !important;
         transform: translateX(-3px);
     }
     
@@ -465,6 +470,10 @@
         .card-body {
             padding: 25px !important;
         }
+        
+        .btn {
+            padding: 12px !important;
+        }
     }
 </style>
 
@@ -475,21 +484,23 @@
         const imagePreview = document.getElementById('imagePreview');
         const previewImage = document.getElementById('previewImage');
         
-        imageInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    imagePreview.style.display = 'block';
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        if (previewImage) previewImage.src = e.target.result;
+                        if (imagePreview) imagePreview.style.display = 'block';
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
                 }
-                
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
+            });
+        }
         
         // =====================================================
-        // 🔥 NUEVA FUNCIÓN: Calculadora de descuentos en tiempo real
+        // 🔥 Calculadora de descuentos en tiempo real
         // =====================================================
         const priceInput = document.getElementById('price');
         const discountInput = document.getElementById('discount_percent');
@@ -498,78 +509,99 @@
         const finalPriceDisplay = document.getElementById('finalPriceDisplay');
         const savingsDisplay = document.getElementById('savingsDisplay');
         
-        function calculateDiscount() {
-            const price = parseFloat(priceInput.value) || 0;
-            const discount = parseInt(discountInput.value) || 0;
-            
-            if (price > 0) {
-                const discountedPrice = price - (price * discount / 100);
-                const savings = price - discountedPrice;
+        if (priceInput && discountInput) {
+            function calculateDiscount() {
+                const price = parseFloat(priceInput.value) || 0;
+                const discount = parseInt(discountInput.value) || 0;
                 
-                originalPriceDisplay.textContent = '$' + price.toFixed(2);
-                finalPriceDisplay.textContent = '$' + discountedPrice.toFixed(2);
-                savingsDisplay.textContent = '$' + savings.toFixed(2);
-                
-                discountPreview.style.display = 'block';
-            } else {
-                discountPreview.style.display = 'none';
-            }
-        }
-        
-        priceInput.addEventListener('input', calculateDiscount);
-        discountInput.addEventListener('input', calculateDiscount);
-        
-        // Calcular al cargar si hay valores (para edición)
-        calculateDiscount();
-        
-        // Validación de formulario
-        const form = document.getElementById('gameForm');
-        const submitBtn = form.querySelector('button[type="submit"]');
-        
-        form.addEventListener('submit', function(e) {
-            // Validar precio positivo
-            const price = parseFloat(priceInput.value);
-            if (price <= 0) {
-                e.preventDefault();
-                alert('El precio debe ser mayor a 0');
-                return;
-            }
-            
-            // Validar descuento
-            const discount = parseInt(discountInput.value) || 0;
-            if (discount < 0 || discount > 100) {
-                e.preventDefault();
-                alert('El descuento debe estar entre 0 y 100');
-                return;
-            }
-            
-            // Validar categoría
-            const category = document.getElementById('category').value;
-            if (!category) {
-                if (!confirm('¿No quieres seleccionar una categoría? Puedes continuar, pero es recomendable categorizar los juegos.')) {
-                    e.preventDefault();
-                    return;
+                if (price > 0) {
+                    const discountedPrice = price - (price * discount / 100);
+                    const savings = price - discountedPrice;
+                    
+                    if (originalPriceDisplay) originalPriceDisplay.textContent = '$' + price.toFixed(2);
+                    if (finalPriceDisplay) finalPriceDisplay.textContent = '$' + discountedPrice.toFixed(2);
+                    if (savingsDisplay) savingsDisplay.textContent = '$' + savings.toFixed(2);
+                    
+                    if (discountPreview) discountPreview.style.display = 'block';
+                } else {
+                    if (discountPreview) discountPreview.style.display = 'none';
                 }
             }
             
-            // Validar tamaño de imagen
-            const image = document.getElementById('image').files[0];
-            if (image && image.size > 5 * 1024 * 1024) { // 5MB
-                e.preventDefault();
-                alert('La imagen no debe exceder los 5MB');
-                return;
-            }
+            priceInput.addEventListener('input', calculateDiscount);
+            discountInput.addEventListener('input', calculateDiscount);
             
-            // Efecto de carga
-            if (!e.defaultPrevented) {
-                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> SUBIENDO...';
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.8';
-            }
-        });
+            // Calcular al cargar si hay valores
+            calculateDiscount();
+        }
+        
+        // =====================================================
+        // 🔥 PROTECCIÓN CONTRA DOBLE CLIC - VERSIÓN CORREGIDA
+        // =====================================================
+        const form = document.getElementById('gameForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (form && submitBtn) {
+            form.addEventListener('submit', function(e) {
+                console.log('Formulario enviado'); // Para debug
+                
+                // Validar precio positivo
+                if (priceInput) {
+                    const price = parseFloat(priceInput.value);
+                    if (price <= 0) {
+                        e.preventDefault();
+                        alert('El precio debe ser mayor a 0');
+                        return false;
+                    }
+                }
+                
+                // Validar descuento
+                if (discountInput) {
+                    const discount = parseInt(discountInput.value) || 0;
+                    if (discount < 0 || discount > 100) {
+                        e.preventDefault();
+                        alert('El descuento debe estar entre 0 y 100');
+                        return false;
+                    }
+                }
+                
+                // Validar categoría
+                const category = document.getElementById('category');
+                if (category && !category.value) {
+                    if (!confirm('¿No quieres seleccionar una categoría? Puedes continuar, pero es recomendable categorizar los juegos.')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+                
+                // Validar tamaño de imagen
+                if (imageInput && imageInput.files[0]) {
+                    if (imageInput.files[0].size > 5 * 1024 * 1024) {
+                        e.preventDefault();
+                        alert('La imagen no debe exceder los 5MB');
+                        return false;
+                    }
+                }
+                
+                // 🔥 CORRECCIÓN: Deshabilitar después de TODAS las validaciones
+                // Usar setTimeout para asegurar que el formulario se envíe
+                setTimeout(function() {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> SUBIENDO...';
+                    submitBtn.style.opacity = '0.8';
+                    submitBtn.style.cursor = 'not-allowed';
+                }, 100);
+                
+                return true; // PERMITIR EL ENVÍO
+            });
+        }
+        
+        // =====================================================
+        // 🔥 Efectos visuales
+        // =====================================================
         
         // Efecto focus en inputs
-        const inputs = form.querySelectorAll('input, textarea, select');
+        const inputs = document.querySelectorAll('input, textarea, select');
         inputs.forEach(input => {
             input.addEventListener('focus', function() {
                 this.style.transform = 'translateY(-1px)';
@@ -580,44 +612,54 @@
             });
         });
         
-        // Efecto ripple para botón submit
-        submitBtn.addEventListener('click', function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const ripple = document.createElement('span');
-            ripple.style.cssText = `
-                position: absolute;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.4);
-                transform: scale(0);
-                animation: ripple 0.6s linear;
-                pointer-events: none;
-                width: 100px;
-                height: 100px;
-                top: ${y - 50}px;
-                left: ${x - 50}px;
-            `;
-            
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
+        // Efecto ripple para botón submit (solo si no está deshabilitado)
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(e) {
+                if (this.disabled) return;
+                
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const ripple = document.createElement('span');
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.4);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                    width: 100px;
+                    height: 100px;
+                    top: ${y - 50}px;
+                    left: ${x - 50}px;
+                    z-index: 9999;
+                `;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    if (ripple && ripple.parentNode) {
+                        ripple.remove();
+                    }
+                }, 600);
+            });
+        }
         
-        // Añadir CSS para ripple
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
+        // Añadir CSS para ripple si no existe
+        if (!document.querySelector('#ripple-style')) {
+            const style = document.createElement('style');
+            style.id = 'ripple-style';
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
                 }
-            }
-        `;
-        document.head.appendChild(style);
+            `;
+            document.head.appendChild(style);
+        }
     });
 </script>
 @endsection

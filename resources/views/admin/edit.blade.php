@@ -501,20 +501,22 @@
         const imagePreview = document.getElementById('imagePreview');
         const previewImage = document.getElementById('previewImage');
         
-        imageInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    imagePreview.style.display = 'block';
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        if (previewImage) previewImage.src = e.target.result;
+                        if (imagePreview) imagePreview.style.display = 'block';
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    if (imagePreview) imagePreview.style.display = 'none';
                 }
-                
-                reader.readAsDataURL(this.files[0]);
-            } else {
-                imagePreview.style.display = 'none';
-            }
-        });
+            });
+        }
         
         // Calculadora de descuentos en tiempo real
         const priceInput = document.getElementById('price');
@@ -524,58 +526,70 @@
         const finalPriceDisplay = document.getElementById('finalPriceDisplay');
         const savingsDisplay = document.getElementById('savingsDisplay');
         
-        function calculateDiscount() {
-            const price = parseFloat(priceInput.value) || 0;
-            const discount = parseInt(discountInput.value) || 0;
-            
-            if (price > 0 && discount > 0) {
-                const discountedPrice = price - (price * discount / 100);
-                const savings = price - discountedPrice;
+        if (priceInput && discountInput) {
+            function calculateDiscount() {
+                const price = parseFloat(priceInput.value) || 0;
+                const discount = parseInt(discountInput.value) || 0;
                 
-                originalPriceDisplay.textContent = '$' + price.toFixed(2);
-                finalPriceDisplay.textContent = '$' + discountedPrice.toFixed(2);
-                savingsDisplay.textContent = '$' + savings.toFixed(2);
-                
-                discountPreview.style.display = 'block';
-            } else if (price > 0 && discount === 0) {
-                discountPreview.style.display = 'none';
+                if (price > 0 && discount > 0) {
+                    const discountedPrice = price - (price * discount / 100);
+                    const savings = price - discountedPrice;
+                    
+                    if (originalPriceDisplay) originalPriceDisplay.textContent = '$' + price.toFixed(2);
+                    if (finalPriceDisplay) finalPriceDisplay.textContent = '$' + discountedPrice.toFixed(2);
+                    if (savingsDisplay) savingsDisplay.textContent = '$' + savings.toFixed(2);
+                    
+                    if (discountPreview) discountPreview.style.display = 'block';
+                } else if (price > 0 && discount === 0) {
+                    if (discountPreview) discountPreview.style.display = 'none';
+                }
             }
+            
+            priceInput.addEventListener('input', calculateDiscount);
+            discountInput.addEventListener('input', calculateDiscount);
+            
+            // Calcular al cargar
+            calculateDiscount();
         }
         
-        priceInput.addEventListener('input', calculateDiscount);
-        discountInput.addEventListener('input', calculateDiscount);
-        
-        // Validación de formulario
+        // =====================================================
+        // 🔥 SIN PROTECCIÓN - EL FORMULARIO SE ENVÍA NORMALMENTE
+        // =====================================================
         const form = document.getElementById('gameForm');
-        const submitBtn = form.querySelector('button[type="submit"]');
         
-        form.addEventListener('submit', function(e) {
-            // Validar precio positivo
-            const price = parseFloat(priceInput.value);
-            if (price <= 0) {
-                e.preventDefault();
-                alert('El precio debe ser mayor a 0');
-                return;
-            }
-            
-            // Validar descuento
-            const discount = parseInt(discountInput.value) || 0;
-            if (discount < 0 || discount > 100) {
-                e.preventDefault();
-                alert('El descuento debe estar entre 0 y 100');
-                return;
-            }
-            
-            // Efecto de carga
-            if (!e.defaultPrevented) {
-                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> GUARDANDO...';
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.8';
-            }
-        });
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Validar precio positivo
+                if (priceInput) {
+                    const price = parseFloat(priceInput.value);
+                    if (price <= 0) {
+                        e.preventDefault();
+                        alert('El precio debe ser mayor a 0');
+                        return false;
+                    }
+                }
+                
+                // Validar descuento
+                if (discountInput) {
+                    const discount = parseInt(discountInput.value) || 0;
+                    if (discount < 0 || discount > 100) {
+                        e.preventDefault();
+                        alert('El descuento debe estar entre 0 y 100');
+                        return false;
+                    }
+                }
+                
+                // EL FORMULARIO SE ENVÍA NORMALMENTE SIN BLOQUEAR EL BOTÓN
+                return true;
+            });
+        }
+        
+        // =====================================================
+        // 🔥 Efectos visuales
+        // =====================================================
         
         // Efecto focus en inputs
-        const inputs = form.querySelectorAll('input, textarea, select');
+        const inputs = document.querySelectorAll('input, textarea, select');
         inputs.forEach(input => {
             input.addEventListener('focus', function() {
                 this.style.transform = 'translateY(-1px)';

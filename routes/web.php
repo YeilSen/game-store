@@ -85,6 +85,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 });
 
+Route::get('/cookies-policy', function () {
+    return view('cookies-policy');
+})->name('cookies-policy');
 /*
 |--------------------------------------------------------------------------
 | RUTAS DE AUTENTICACIÓN

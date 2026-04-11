@@ -403,6 +403,12 @@
             color: #bbf7d0;
         }
         
+        /* Estilo para campos inválidos */
+        .input-field.invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+        
         @media (max-width: 480px) {
             .card {
                 max-width: 100%;
@@ -456,7 +462,7 @@
                 </div>
             @endif
             
-            <form method="POST" action="{{ route('register') }}">
+            <form method="POST" action="{{ route('register') }}" id="registerForm">
                 @csrf
                 
                 <!-- Nombre -->
@@ -468,7 +474,8 @@
                         class="input-field email-field"
                         placeholder="Tu nombre o apodo"
                         required autofocus
-                        value="{{ old('name') }}">
+                        value="{{ old('name') }}"
+                        id="name">
                 </div>
                 
                 <!-- Email -->
@@ -480,7 +487,13 @@
                         class="input-field email-field"
                         placeholder="jugador@ejemplo.com"
                         required
-                        value="{{ old('email') }}">
+                        value="{{ old('email') }}"
+                        id="email"
+                        pattern="[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com|rayonic\.com)$"
+                        title="Solo correos de: Gmail, Hotmail, Outlook, Yahoo o Rayonic">
+                    <div class="mt-2" style="color: #94a3b8; font-size: 0.8rem;">
+                        <i class="bi bi-info-circle me-1"></i> Solo correos: @gmail.com, @hotmail.com, @outlook.com, @yahoo.com, @rayonic.com
+                    </div>
                 </div>
                 
                 <!-- Contraseña -->
@@ -493,7 +506,8 @@
                     <input type="password" name="password" 
                         class="input-field password-field"
                         required
-                        placeholder="Mínimo 8 caracteres">
+                        placeholder="Mínimo 8 caracteres"
+                        id="password">
                     <div class="password-hint">
                         Mínimo 8 caracteres con letras y números
                     </div>
@@ -507,11 +521,11 @@
                     <input type="password" name="password_confirmation" 
                         class="input-field confirm-field"
                         required
-                        placeholder="Repite tu contraseña">
+                        placeholder="Repite tu contraseña"
+                        id="password_confirmation">
                 </div>
                 
-                <button type="submit"
-                    class="submit-btn gaming-font">
+                <button type="submit" class="submit-btn gaming-font" id="registerButton">
                     CREAR CUENTA
                 </button>
                 
@@ -536,12 +550,35 @@
     </div>
     
     <script>
-        // Validación del formulario
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const name = document.querySelector('input[name="name"]').value.trim();
-            const email = document.querySelector('input[name="email"]').value.trim();
-            const password = document.querySelector('input[name="password"]').value;
-            const confirm = document.querySelector('input[name="password_confirmation"]').value;
+        // =====================================================
+        // 🔥 VALIDACIÓN DE DOMINIOS DE CORREO
+        // =====================================================
+        const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'rayonic.com'];
+        
+        // Validación en tiempo real del email
+        document.getElementById('email')?.addEventListener('blur', function() {
+            const email = this.value;
+            if (email.includes('@')) {
+                const domain = email.split('@')[1];
+                if (!allowedDomains.includes(domain)) {
+                    this.classList.add('invalid');
+                    this.style.borderColor = '#ef4444';
+                } else {
+                    this.classList.remove('invalid');
+                    this.style.borderColor = '';
+                }
+            }
+        });
+        
+        // =====================================================
+        // 🔥 VALIDACIÓN DEL FORMULARIO + PROTECCIÓN DOBLE CLIC
+        // =====================================================
+        document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+            const name = document.getElementById('name')?.value.trim() || '';
+            const email = document.getElementById('email')?.value.trim() || '';
+            const password = document.getElementById('password')?.value || '';
+            const confirm = document.getElementById('password_confirmation')?.value || '';
+            const btn = document.getElementById('registerButton');
             
             // Validar nombre
             if (name.length < 2) {
@@ -558,6 +595,16 @@
                 return false;
             }
             
+            // Validar dominio del email
+            if (email.includes('@')) {
+                const domain = email.split('@')[1];
+                if (!allowedDomains.includes(domain)) {
+                    e.preventDefault();
+                    alert('❌ Dominio de correo no permitido. Usa: Gmail, Hotmail, Outlook, Yahoo o Rayonic');
+                    return false;
+                }
+            }
+            
             // Validar contraseña
             if (password.length < 8) {
                 e.preventDefault();
@@ -565,20 +612,90 @@
                 return false;
             }
             
-            // Validar que coincidan
+            // Validar que las contraseñas coincidan
             if (password !== confirm) {
                 e.preventDefault();
                 alert('Las contraseñas no coinciden');
                 return false;
             }
             
-            // Mostrar loading en el botón
-            const btn = document.querySelector('.submit-btn');
-            btn.disabled = true;
-            btn.innerHTML = 'CREANDO CUENTA...';
+            // =====================================================
+            // 🔥 PROTECCIÓN CONTRA DOBLE CLIC
+            // =====================================================
+            if (btn) {
+                // Si ya está deshabilitado, cancelar
+                if (btn.disabled) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+                
+                // Deshabilitar el botón
+                btn.disabled = true;
+                
+                // Guardar texto original
+                if (!btn.dataset.originalText) {
+                    btn.dataset.originalText = btn.innerHTML;
+                }
+                
+                // Cambiar texto a "CREANDO CUENTA..."
+                btn.innerHTML = 'CREANDO CUENTA...';
+                
+                // Cambiar estilo visual
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'not-allowed';
+                btn.style.pointerEvents = 'none';
+            }
             
             return true;
         });
+        
+        // =====================================================
+        // 🔥 RIPPLE EFFECT PARA EL BOTÓN
+        // =====================================================
+        document.querySelector('.submit-btn')?.addEventListener('click', function(e) {
+            if (this.disabled) return;
+            
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const ripple = document.createElement('span');
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.4);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+                width: 100px;
+                height: 100px;
+                top: ${y - 50}px;
+                left: ${x - 50}px;
+                z-index: 9999;
+            `;
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+        
+        // Añadir CSS para ripple si no existe
+        if (!document.querySelector('#ripple-style')) {
+            const style = document.createElement('style');
+            style.id = 'ripple-style';
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
     </script>
 </body>
 </html>

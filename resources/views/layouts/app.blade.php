@@ -58,7 +58,6 @@
             font-family: 'Orbitron', sans-serif;
         }
         
-        /* NAVBAR ESTILIZADA */
         .navbar {
             background: rgba(10, 10, 20, 0.9) !important;
             backdrop-filter: blur(10px);
@@ -109,11 +108,12 @@
             border-radius: 8px;
             transition: all 0.3s ease;
             position: relative;
+            background: transparent;
         }
         
         .nav-link:hover {
             color: white !important;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(99, 102, 241, 0.2) !important;
             transform: translateY(-2px);
         }
         
@@ -143,7 +143,79 @@
             background: rgba(251, 191, 36, 0.2);
         }
         
-        /* DROPDOWN ESTILIZADO */
+        .home-btn {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 8px;
+            padding: 8px 15px;
+            color: #22d3ee;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 5px;
+        }
+        
+        .home-btn:hover {
+            background: rgba(34, 211, 238, 0.2);
+            color: #a5f3fc;
+            transform: translateY(-2px);
+            border-color: rgba(34, 211, 238, 0.5);
+        }
+        
+        .clock {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #22d3ee;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.1);
+            backdrop-filter: blur(5px);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .clock i {
+            font-size: 0.9rem;
+        }
+        
+        .clock-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 20px;
+        }
+        
+        .navbar .container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-collapse {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+        }
+        
         .dropdown-menu {
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
@@ -173,7 +245,6 @@
             margin: 8px 0;
         }
         
-        /* BADGE PARA EL CARRITO */
         .badge.bg-danger {
             background: linear-gradient(45deg, #ef4444, #dc2626) !important;
             box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
@@ -187,7 +258,6 @@
             50% { transform: scale(1.1); }
         }
         
-        /* TOGGLER BUTTON */
         .navbar-toggler {
             border: 1px solid rgba(99, 102, 241, 0.3);
             padding: 5px 10px;
@@ -203,13 +273,11 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='%2322d3ee' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z'/%3E%3C/svg");
         }
         
-        /* CONTENIDO PRINCIPAL */
         main {
             padding-top: 20px !important;
             min-height: calc(100vh - 180px);
         }
         
-        /* EFECTOS DE GLOW PARA EL FONDO */
         .glow-effect {
             position: fixed;
             width: 300px;
@@ -240,24 +308,49 @@
             50% { transform: translateY(-20px) scale(1.05); }
         }
         
-        /* RESPONSIVIDAD */
+        @media (max-width: 992px) {
+            .clock-container {
+                margin-left: 0;
+                margin-top: 10px;
+                justify-content: center;
+            }
+            .navbar-collapse {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
         @media (max-width: 768px) {
             .navbar-brand {
                 font-size: 1.5rem;
             }
-            
             .nav-link {
                 margin: 5px 0;
                 padding: 10px 15px !important;
+                width: 100%;
             }
-            
+            .home-btn {
+                margin: 5px 0;
+                width: 100%;
+                justify-content: center;
+            }
+            .clock {
+                width: 100%;
+                justify-content: center;
+                margin: 5px 0;
+            }
+            .clock-container {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+            }
             .dropdown-menu {
                 margin-top: 10px;
                 background: rgba(15, 23, 42, 0.98);
+                width: 100%;
             }
         }
         
-        /* ANIMACIÓN DE ENTRADA PARA ELEMENTOS */
         .fade-in {
             animation: fadeIn 0.5s ease-out;
         }
@@ -275,11 +368,9 @@
     </style>
 </head>
 <body>
-    {{-- EFECTOS DE FONDO --}}
     <div class="glow-effect glow-cyan"></div>
     <div class="glow-effect glow-purple"></div>
     
-    {{-- BARRA DE NAVEGACIÓN --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fade-in">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
@@ -309,11 +400,6 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('admin.logs.index') }}">
-                                            <i class="bi bi-clock-history"></i> Logs de Sesión
-                                        </a>
-                                    </li>
-                                    <li>
                                         <a class="dropdown-item" href="{{ route('admin.bans.index') }}">
                                             <i class="bi bi-shield-x"></i> Gestionar Baneos
                                         </a>
@@ -333,7 +419,18 @@
                     @endauth
                 </ul>
 
-                {{-- RUTAS DE AUTENTICACIÓN Y PERFIL --}}
+                <div class="clock-container">
+                    <a href="{{ route('dashboard') }}" class="home-btn">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <div class="clock" id="liveClock">
+                        <i class="bi bi-clock"></i>
+                        <span id="clockTime">--:--:--</span>
+                        <span id="clockDate" class="ms-1" style="font-size: 0.75rem; color: #94a3b8;"></span>
+                    </div>
+                </div>
+
                 <ul class="navbar-nav">
                     @guest
                         @if (Route::has('login'))
@@ -364,7 +461,7 @@
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <form method="POST" action="{{ route('logout') }}">
+                                    <form method="POST" action="{{ route('logout') }}" id="logout-form">
                                         @csrf
                                         <button class="dropdown-item" type="submit">
                                             <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
@@ -379,19 +476,17 @@
         </div>
     </nav>
 
-    {{-- CONTENIDO PRINCIPAL --}}
     <main class="py-4 fade-in">
         <div class="container">
             @yield('content')
         </div>
     </main>
 
-    {{-- Scripts de Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
     <script>
         // =====================================================
-        // 🔥 ANIMACIONES DEL NAVBAR 🔥
+        // 🔥 ANIMACIONES DEL NAVBAR
         // =====================================================
         document.addEventListener('DOMContentLoaded', function() {
             const navLinks = document.querySelectorAll('.nav-link');
@@ -401,174 +496,419 @@
         });
 
         // =====================================================
-        // 🔥 PROTECCIÓN CONTRA DOBLE CLIC (TODO EL SISTEMA) 🔥
+        // 🔥 RELOJ EN TIEMPO REAL
         // =====================================================
+        function updateClock() {
+            const now = new Date();
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            
+            const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            
+            const dayName = days[now.getDay()];
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            const dateString = `${dayName} ${day} ${month} ${year}`;
+            
+            const clockTimeSpan = document.getElementById('clockTime');
+            const clockDateSpan = document.getElementById('clockDate');
+            
+            if (clockTimeSpan) clockTimeSpan.textContent = timeString;
+            if (clockDateSpan) clockDateSpan.textContent = dateString;
+        }
+        
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // =====================================================
+        // 🔥 PROTECCIÓN GLOBAL - BLOQUEA TODOS LOS BOTONES AL PRESIONAR UNO
+        // =====================================================
+        let isProcessing = false;
+        
         document.addEventListener('DOMContentLoaded', function() {
             
             // =====================================================
-            // 1️⃣ PROTEGER TODOS LOS FORMULARIOS
+            // 1️⃣ BLOQUEAR TODOS LOS BOTONES DE FORMULARIO
             // =====================================================
-            const forms = document.querySelectorAll('form');
+            const forms = document.querySelectorAll('form:not(#logout-form)');
             
             forms.forEach(form => {
                 form.addEventListener('submit', function(e) {
-                    
-                    // Buscar el botón submit dentro de este formulario
-                    const submitButton = this.querySelector('button[type="submit"]');
-                    
-                    if (submitButton) {
-                        // Verificar si ya está deshabilitado (para evitar loops)
-                        if (submitButton.disabled) {
-                            e.preventDefault();
-                            return false;
-                        }
-                        
-                        // Guardar el texto original (para restaurarlo después)
-                        if (!submitButton.hasAttribute('data-original-text')) {
-                            submitButton.setAttribute('data-original-text', submitButton.innerHTML);
-                        }
-                        
-                        const originalText = submitButton.innerHTML;
-                        
-                        // Deshabilitar el botón
-                        submitButton.disabled = true;
-                        
-                        // Cambiar el texto (con icono de carga de Bootstrap)
-                        submitButton.innerHTML = `
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            Procesando...
-                        `;
-                        
-                        // Mantener el estilo original (para no perder el diseño)
-                        submitButton.style.opacity = '0.8';
-                        submitButton.style.cursor = 'not-allowed';
-                        
-                        // Agregar clase para estilos adicionales
-                        submitButton.classList.add('btn-processing');
-                        
-                        // Opcional: Re-habilitar después de 5 segundos (solo si hay error)
-                        // Esto es útil si el servidor tarda o si algo falla
-                        setTimeout(() => {
-                            if (submitButton.disabled) {
-                                submitButton.disabled = false;
-                                submitButton.innerHTML = submitButton.getAttribute('data-original-text') || originalText;
-                                submitButton.style.opacity = '1';
-                                submitButton.style.cursor = 'pointer';
-                                submitButton.classList.remove('btn-processing');
-                            }
-                        }, 5000);
+                    if (isProcessing) {
+                        e.preventDefault();
+                        alert('⏳ Espera a que termine la acción actual...');
+                        return false;
                     }
+                    
+                    isProcessing = true;
+                    
+                    // Deshabilitar TODOS los botones de la página
+                    disableAllInteractiveElements();
+                    
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        const originalText = submitButton.innerHTML;
+                        if (!submitButton.hasAttribute('data-original-text')) {
+                            submitButton.setAttribute('data-original-text', originalText);
+                        }
+                        submitButton.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Procesando...`;
+                        submitButton.style.opacity = '0.8';
+                    }
+                    
+                    // Timeout de seguridad (10 segundos)
+                    setTimeout(() => {
+                        if (isProcessing) {
+                            enableAllInteractiveElements();
+                            isProcessing = false;
+                            if (submitButton) {
+                                submitButton.innerHTML = submitButton.getAttribute('data-original-text');
+                                submitButton.style.opacity = '1';
+                            }
+                        }
+                    }, 10000);
+                    
+                    return true;
                 });
             });
             
             // =====================================================
-            // 2️⃣ PROTEGER ENLACES PELIGROSOS
-            // (como eliminar, vaciar carrito, etc.)
+            // 2️⃣ BLOQUEAR TODOS LOS ENLACES PELIGROSOS
             // =====================================================
             const dangerousLinks = document.querySelectorAll('a[onclick*="confirm"], a.delete-link, .btn-danger, [data-confirm]');
             
             dangerousLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
-                    if (this.classList.contains('disabled')) {
+                    if (isProcessing) {
                         e.preventDefault();
+                        alert('⏳ Espera a que termine la acción actual...');
                         return false;
                     }
                     
-                    this.classList.add('disabled');
-                    this.style.opacity = '0.6';
-                    this.style.pointerEvents = 'none';
+                    isProcessing = true;
+                    disableAllInteractiveElements();
                     
-                    // Si el enlace tiene confirmación, esperamos
-                    if (this.hasAttribute('onclick') && this.getAttribute('onclick').includes('confirm')) {
-                        // No hacemos nada, la confirmación ya maneja
-                    } else {
-                        // Re-habilitar después de 2 segundos
-                        setTimeout(() => {
-                            this.classList.remove('disabled');
-                            this.style.opacity = '1';
-                            this.style.pointerEvents = 'auto';
-                        }, 2000);
-                    }
+                    setTimeout(() => {
+                        if (isProcessing) {
+                            enableAllInteractiveElements();
+                            isProcessing = false;
+                        }
+                    }, 3000);
+                    
+                    return true;
                 });
             });
-        });
-
-        // =====================================================
-        // 🔥 FUNCIÓN GLOBAL PARA RE-HABILITAR BOTONES (útil para AJAX)
-        // =====================================================
-        window.enableSubmitButtons = function(formId) {
-            const form = document.getElementById(formId);
-            if (form) {
-                const btn = form.querySelector('button[type="submit"]');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = btn.getAttribute('data-original-text') || 'Enviar';
-                    btn.style.opacity = '1';
-                    btn.style.cursor = 'pointer';
-                    btn.classList.remove('btn-processing');
-                }
-            }
-        };
-
-        // =====================================================
-        // 🔥 FUNCIÓN PARA DESHABILITAR BOTÓN MANUALMENTE
-        // =====================================================
-        window.disableSubmitButton = function(formId, message = 'Procesando...') {
-            const form = document.getElementById(formId);
-            if (form) {
-                const btn = form.querySelector('button[type="submit"]');
-                if (btn) {
-                    if (!btn.hasAttribute('data-original-text')) {
-                        btn.setAttribute('data-original-text', btn.innerHTML);
+            
+            // =====================================================
+            // 3️⃣ BLOQUEAR TODOS LOS BOTONES DE NAVEGACIÓN
+            // =====================================================
+            const navButtons = document.querySelectorAll('a.nav-link:not(.dropdown-toggle), .home-btn');
+            
+            navButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (isProcessing) {
+                        e.preventDefault();
+                        alert('⏳ Espera a que termine la acción actual...');
+                        return false;
                     }
-                    btn.disabled = true;
-                    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> ${message}`;
-                    btn.style.opacity = '0.8';
-                    btn.style.cursor = 'not-allowed';
-                    btn.classList.add('btn-processing');
-                }
+                    
+                    isProcessing = true;
+                    disableAllInteractiveElements();
+                    
+                    setTimeout(() => {
+                        if (isProcessing) {
+                            enableAllInteractiveElements();
+                            isProcessing = false;
+                        }
+                    }, 3000);
+                    
+                    return true;
+                });
+            });
+            
+            // =====================================================
+            // FUNCIONES PARA DES/HABILITAR ELEMENTOS
+            // =====================================================
+            function disableAllInteractiveElements() {
+                // Deshabilitar todos los botones de formulario
+                document.querySelectorAll('button[type="submit"], button:not([type="button"]), input[type="submit"]').forEach(el => {
+                    el.disabled = true;
+                    el.style.opacity = '0.6';
+                    el.style.cursor = 'wait';
+                });
+                
+                // Deshabilitar todos los enlaces con clase .btn
+                document.querySelectorAll('a.btn, .home-btn, .nav-link').forEach(el => {
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.6';
+                    el.style.cursor = 'wait';
+                });
+                
+                // Agregar clase global
+                document.body.style.cursor = 'wait';
             }
-        };
+            
+            function enableAllInteractiveElements() {
+                // Re-habilitar todos los botones de formulario
+                document.querySelectorAll('button[type="submit"], button:not([type="button"]), input[type="submit"]').forEach(el => {
+                    el.disabled = false;
+                    el.style.opacity = '1';
+                    el.style.cursor = 'pointer';
+                });
+                
+                // Re-habilitar todos los enlaces
+                document.querySelectorAll('a.btn, .home-btn, .nav-link').forEach(el => {
+                    el.style.pointerEvents = 'auto';
+                    el.style.opacity = '1';
+                    el.style.cursor = 'pointer';
+                });
+                
+                // Quitar clase global
+                document.body.style.cursor = 'default';
+            }
+            
+            // Exponer funciones globalmente por si se necesitan
+            window.enableAllButtons = enableAllInteractiveElements;
+            window.disableAllButtons = disableAllInteractiveElements;
+        });
     </script>
 
     <style>
-        /* Estilos adicionales para botones en procesamiento */
-        .btn-processing {
-            cursor: not-allowed !important;
-            pointer-events: none !important;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-processing::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        /* Estilo para enlaces deshabilitados */
-        .disabled {
-            pointer-events: none;
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
         /* Spinner personalizado */
         .spinner-border-sm {
             width: 1rem;
             height: 1rem;
             border-width: 0.15em;
         }
+        
+        /* Cursor de espera en toda la página */
+        body.waiting {
+            cursor: wait !important;
+        }
+        
+        /* Deshabilitar todos los elementos interactivos */
+        .global-disabled {
+            pointer-events: none !important;
+            opacity: 0.6 !important;
+        }
     </style>
+
+    {{-- ===================================================== --}}
+    {{-- 🍪 AVISO DE COOKIES --}}
+    {{-- ===================================================== --}}
+    <div id="cookieConsent" class="cookie-consent" style="display: none;">
+        <div class="cookie-content">
+            <div class="cookie-icon">
+                <i class="bi bi-cookie"></i>
+            </div>
+            <div class="cookie-text">
+                <h4>🍪 Aviso de Cookies</h4>
+                <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, realizar análisis y mostrarte contenido personalizado.</p>
+                <p class="cookie-small">Al hacer clic en "Aceptar", consientes el uso de TODAS las cookies.</p>
+            </div>
+            <div class="cookie-buttons">
+                <button id="acceptCookies" class="cookie-btn accept">Aceptar</button>
+                <button id="declineCookies" class="cookie-btn decline">Rechazar</button>
+                <a href="{{ url('/cookies-policy') }}" class="cookie-link">Más información</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .cookie-consent {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(10, 10, 20, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 211, 238, 0.1);
+            z-index: 9999;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .cookie-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px 25px;
+        }
+        
+        .cookie-icon {
+            font-size: 2.5rem;
+            color: #22d3ee;
+            background: rgba(34, 211, 238, 0.1);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .cookie-text {
+            flex: 1;
+        }
+        
+        .cookie-text h4 {
+            color: #22d3ee;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .cookie-text p {
+            color: #cbd5e1;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .cookie-small {
+            font-size: 0.75rem !important;
+            color: #94a3b8 !important;
+            margin-top: 5px !important;
+        }
+        
+        .cookie-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .cookie-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .cookie-btn.accept {
+            background: linear-gradient(45deg, #22d3ee, #6366f1);
+            color: #0f172a;
+        }
+        
+        .cookie-btn.accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(34, 211, 238, 0.4);
+        }
+        
+        .cookie-btn.decline {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fecaca;
+        }
+        
+        .cookie-btn.decline:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .cookie-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        
+        .cookie-link:hover {
+            color: #22d3ee;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .cookie-content {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            .cookie-icon { margin: 0 auto; }
+            .cookie-buttons { justify-content: center; }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cookieConsent = document.getElementById('cookieConsent');
+            const acceptBtn = document.getElementById('acceptCookies');
+            const declineBtn = document.getElementById('declineCookies');
+            const cookieLink = document.querySelector('.cookie-link');
+            
+            function checkCookieConsent() {
+                const cookiesAccepted = localStorage.getItem('cookies_accepted');
+                const cookiesDeclined = localStorage.getItem('cookies_declined');
+                if (cookiesAccepted === 'true' || cookiesDeclined === 'true') {
+                    cookieConsent.style.display = 'none';
+                } else {
+                    cookieConsent.style.display = 'block';
+                }
+            }
+            
+            function acceptCookies() {
+                localStorage.setItem('cookies_accepted', 'true');
+                localStorage.removeItem('cookies_declined');
+                cookieConsent.style.display = 'none';
+                showToast('✅ Has aceptado las cookies', 'success');
+            }
+            
+            function declineCookies() {
+                localStorage.setItem('cookies_declined', 'true');
+                localStorage.removeItem('cookies_accepted');
+                cookieConsent.style.display = 'none';
+                showToast('ℹ️ Solo se usarán cookies esenciales', 'info');
+            }
+            
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 100px;
+                    right: 20px;
+                    background: ${type === 'success' ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'rgba(15, 23, 42, 0.95)'};
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 12px;
+                    font-size: 0.9rem;
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease-out;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                `;
+                toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i> ${message}`;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity 0.3s';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+            
+            const style = document.createElement('style');
+            style.textContent = `@keyframes slideInRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+            document.head.appendChild(style);
+            
+            if (acceptBtn) acceptBtn.addEventListener('click', acceptCookies);
+            if (declineBtn) declineBtn.addEventListener('click', declineCookies);
+            if (cookieLink) cookieLink.addEventListener('click', function(e) { return true; });
+            
+            checkCookieConsent();
+        });
+    </script>
 </body>
 </html>

@@ -501,7 +501,7 @@
         @endif
 
         {{-- Login form --}}
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login') }}" id="loginForm">
             @csrf
 
             {{-- Email field --}}
@@ -509,7 +509,12 @@
                 <label for="email" class="form-label">CORREO ELECTRÓNICO</label>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus 
                        placeholder="jugador@ejemplo.com"
-                       class="form-input">
+                       class="form-input" 
+                       pattern="[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com|rayonic\.com)$"
+                       title="Solo correos de: Gmail, Hotmail, Outlook, Yahoo o Rayonic">
+                <div class="mt-2" style="color: #94a3b8; font-size: 0.8rem;">
+                    <i class="bi bi-info-circle me-1"></i> Solo correos: @gmail.com, @hotmail.com, @outlook.com, @yahoo.com, @rayonic.com
+                </div>
             </div>
 
             {{-- Password field --}}
@@ -535,7 +540,7 @@
             </div>
 
             {{-- Submit button --}}
-            <button type="submit" class="submit-btn">
+            <button type="submit" class="submit-btn" id="loginButton">
                 <i class="bi bi-box-arrow-in-right"></i> INGRESAR
             </button>
         </form>
@@ -552,11 +557,88 @@
     </div>
 
     <script>
-        // Add ripple effect to button
+        // =====================================================
+        // 🔥 VALIDACIÓN DE DOMINIOS DE CORREO (lado del cliente)
+        // =====================================================
         document.addEventListener('DOMContentLoaded', function() {
-            const submitBtn = document.querySelector('.submit-btn');
+            const emailInput = document.getElementById('email');
+            const loginForm = document.getElementById('loginForm');
             
+            // Dominios permitidos
+            const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'rayonic.com'];
+            
+            // Validación en tiempo real (opcional)
+            emailInput.addEventListener('blur', function() {
+                const email = this.value;
+                if (email.includes('@')) {
+                    const domain = email.split('@')[1];
+                    if (!allowedDomains.includes(domain)) {
+                        this.style.borderColor = '#ef4444';
+                        this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+                    } else {
+                        this.style.borderColor = 'rgba(34, 211, 238, 0.6)';
+                        this.style.boxShadow = 'none';
+                    }
+                }
+            });
+            
+            // Validación al enviar el formulario
+            loginForm.addEventListener('submit', function(e) {
+                const email = emailInput.value;
+                
+                if (email.includes('@')) {
+                    const domain = email.split('@')[1];
+                    if (!allowedDomains.includes(domain)) {
+                        e.preventDefault();
+                        alert('❌ Dominio de correo no permitido. Usa: Gmail, Hotmail, Outlook, Yahoo o Rayonic');
+                        return false;
+                    }
+                }
+            });
+        });
+
+        // =====================================================
+        // 🔥 PROTECCIÓN CONTRA DOBLE CLIC
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('loginButton');
+            
+            if (loginForm && submitBtn) {
+                loginForm.addEventListener('submit', function(e) {
+                    
+                    // Si el botón ya está deshabilitado, cancelar
+                    if (submitBtn.disabled) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
+                    
+                    // Deshabilitar el botón INMEDIATAMENTE
+                    submitBtn.disabled = true;
+                    
+                    // Guardar el texto original (por si acaso)
+                    if (!submitBtn.dataset.originalText) {
+                        submitBtn.dataset.originalText = submitBtn.innerHTML;
+                    }
+                    
+                    // Cambiar el texto a "PROCESANDO..."
+                    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> PROCESANDO...';
+                    
+                    // Cambiar estilo visual
+                    submitBtn.style.opacity = '0.7';
+                    submitBtn.style.cursor = 'not-allowed';
+                    submitBtn.style.pointerEvents = 'none';
+                    
+                    // Permitir que el formulario se envíe
+                    return true;
+                });
+            }
+            
+            // Efecto ripple para el botón
             submitBtn.addEventListener('click', function(e) {
+                if (this.disabled) return;
+                
                 const rect = this.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -573,6 +655,7 @@
                     height: 100px;
                     top: ${y - 50}px;
                     left: ${x - 50}px;
+                    z-index: 9999;
                 `;
                 
                 this.appendChild(ripple);
@@ -581,18 +664,6 @@
                     ripple.remove();
                 }, 600);
             });
-            
-            // Add CSS for ripple animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes ripple {
-                    to {
-                        transform: scale(4);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
             
             // Focus effect for inputs
             const inputs = document.querySelectorAll('.form-input');
@@ -606,6 +677,18 @@
                 });
             });
         });
+
+        // Añadir CSS para ripple
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

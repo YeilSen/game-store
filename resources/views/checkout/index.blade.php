@@ -28,7 +28,6 @@
             @endif
 
             <div class="row">
-                {{-- Formulario de pago --}}
                 <div class="col-lg-8 mb-4">
                     <div class="card" style="
                         background: rgba(10, 15, 28, 0.95);
@@ -115,13 +114,15 @@
                                                        id="billing_phone" 
                                                        name="billing_phone"
                                                        value="{{ old('billing_phone') }}"
-                                                       placeholder="+1234567890"
+                                                       placeholder="Teléfono"
+                                                       maxlength="10"
+                                                       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                                        style="
                                                             background: rgba(30, 41, 59, 0.8);
                                                             border: 1px solid rgba(99, 102, 241, 0.3);
                                                             color: #ffffff;
                                                        ">
-                                                <label for="billing_phone" style="color: #94a3b8;">Teléfono</label>
+                                                <label for="billing_phone" style="color: #94a3b8;">Teléfono (Máx 10 números)</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
@@ -137,13 +138,13 @@
                                                             border: 1px solid rgba(99, 102, 241, 0.3);
                                                             color: #ffffff;
                                                        ">
-                                                <label for="billing_address" style="color: #94a3b8;">Dirección</label>
+                                                <label for="billing_address" style="color: #94a3b8;">Dirección (Opcional)</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- Sección de tarjeta de crédito (inicialmente visible) --}}
+                                {{-- Sección de tarjeta de crédito --}}
                                 <div id="credit-card-section">
                                     <h6 class="mb-3" style="color: #a5f3fc; font-weight: 600;">
                                         <i class="bi bi-credit-card me-2"></i> Información de Tarjeta
@@ -154,18 +155,22 @@
                                                    class="form-control" 
                                                    id="card_number" 
                                                    name="card_number"
-                                                   value="{{ old('card_number') }}"
                                                    required
                                                    placeholder="1234 5678 9012 3456"
                                                    maxlength="19"
-                                                   pattern="[0-9\s]{13,19}"
+                                                   onkeypress="return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 32"
                                                    style="
                                                         background: rgba(30, 41, 59, 0.8);
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                         letter-spacing: 1px;
                                                    ">
-                                            <label for="card_number" style="color: #94a3b8;">Número de Tarjeta *</label>
+                                            <label for="card_number" style="color: #94a3b8;">Número de Tarjeta * (16 dígitos)</label>
+                                        </div>
+                                        <div class="card-icons mt-2">
+                                            <i class="bi bi-cc-visa me-2" style="color: #6366f1; font-size: 1.5rem;"></i>
+                                            <i class="bi bi-cc-mastercard me-2" style="color: #f59e0b; font-size: 1.5rem;"></i>
+                                            <i class="bi bi-cc-amex" style="color: #10b981; font-size: 1.5rem;"></i>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -182,7 +187,7 @@
                                                         ">
                                                     <option value="" selected disabled>MM</option>
                                                     @for($i = 1; $i <= 12; $i++)
-                                                        <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}" {{ old('card_exp_month') == $i ? 'selected' : '' }}>
+                                                        <option value="{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}">
                                                             {{ str_pad($i, 2, '0', STR_PAD_LEFT) }}
                                                         </option>
                                                     @endfor
@@ -203,7 +208,7 @@
                                                         ">
                                                     <option value="" selected disabled>AAAA</option>
                                                     @for($i = date('Y'); $i <= date('Y') + 10; $i++)
-                                                        <option value="{{ $i }}" {{ old('card_exp_year') == $i ? 'selected' : '' }}>
+                                                        <option value="{{ $i }}">
                                                             {{ $i }}
                                                         </option>
                                                     @endfor
@@ -220,37 +225,53 @@
                                                        required
                                                        placeholder="123"
                                                        maxlength="4"
-                                                       pattern="[0-9]{3,4}"
+                                                       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                                        style="
                                                             background: rgba(30, 41, 59, 0.8);
                                                             border: 1px solid rgba(99, 102, 241, 0.3);
                                                             color: #ffffff;
                                                        ">
-                                                <label for="card_cvv" style="color: #94a3b8;">CVV *</label>
+                                                <label for="card_cvv" style="color: #94a3b8;">CVV * (3 o 4 dígitos)</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- Sección de transferencia bancaria (inicialmente oculta) --}}
+                                {{-- Sección de transferencia bancaria --}}
                                 <div id="bank-transfer-section" style="display: none;">
                                     <h6 class="mb-3" style="color: #a5f3fc; font-weight: 600;">
                                         <i class="bi bi-bank me-2"></i> Información de Transferencia
                                     </h6>
+                                    <div class="alert mb-4" style="
+                                        background: rgba(34, 211, 238, 0.1);
+                                        border: 1px solid rgba(34, 211, 238, 0.3);
+                                        border-radius: 12px;
+                                        color: #67e8f9;
+                                        padding: 15px;
+                                    ">
+                                        <h6 class="mb-2">
+                                            <i class="bi bi-info-circle me-2"></i> Instrucciones para transferencia:
+                                        </h6>
+                                        <p class="mb-0 small">
+                                            1. Realiza la transferencia a nuestra cuenta bancaria<br>
+                                            2. Incluye el número de referencia en el formulario<br>
+                                            3. Tu pedido será procesado una vez confirmemos el pago
+                                        </p>
+                                    </div>
                                     <div class="mb-3">
                                         <div class="form-floating">
                                             <input type="text" 
                                                    class="form-control" 
                                                    id="bank_name" 
                                                    name="bank_name"
-                                                   value="{{ old('bank_name') }}"
                                                    placeholder="Nombre del Banco"
+                                                   onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32"
                                                    style="
                                                         background: rgba(30, 41, 59, 0.8);
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="bank_name" style="color: #94a3b8;">Nombre del Banco *</label>
+                                            <label for="bank_name" style="color: #94a3b8;">Nombre del Banco * (Solo letras)</label>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -259,14 +280,15 @@
                                                    class="form-control" 
                                                    id="account_number" 
                                                    name="account_number"
-                                                   value="{{ old('account_number') }}"
                                                    placeholder="Número de Cuenta"
+                                                   maxlength="20"
+                                                   onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                                    style="
                                                         background: rgba(30, 41, 59, 0.8);
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="account_number" style="color: #94a3b8;">Número de Cuenta *</label>
+                                            <label for="account_number" style="color: #94a3b8;">Número de Cuenta * (Solo números)</label>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -275,14 +297,13 @@
                                                    class="form-control" 
                                                    id="transaction_reference" 
                                                    name="transaction_reference"
-                                                   value="{{ old('transaction_reference') }}"
                                                    placeholder="Referencia de Transacción"
                                                    style="
                                                         background: rgba(30, 41, 59, 0.8);
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="transaction_reference" style="color: #94a3b8;">Referencia *</label>
+                                            <label for="transaction_reference" style="color: #94a3b8;">Referencia de Transferencia *</label>
                                         </div>
                                     </div>
                                 </div>
@@ -458,11 +479,6 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 25px rgba(34, 211, 238, 0.4) !important;
     }
-    
-    #pay-button:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
 </style>
 
 <script>
@@ -475,100 +491,167 @@
         const bankTransferRadio = document.getElementById('bank_transfer');
         
         // Cambiar entre métodos de pago
-        creditCardRadio.addEventListener('change', function() {
-            if (this.checked) {
-                creditCardSection.style.display = 'block';
-                bankTransferSection.style.display = 'none';
-                
-                // Hacer campos requeridos
-                document.getElementById('card_number').required = true;
-                document.getElementById('card_exp_month').required = true;
-                document.getElementById('card_exp_year').required = true;
-                document.getElementById('card_cvv').required = true;
-                
-                // Quitar requerido de campos de transferencia
-                document.getElementById('bank_name').required = false;
-                document.getElementById('account_number').required = false;
-                document.getElementById('transaction_reference').required = false;
-            }
-        });
+        if (creditCardRadio && bankTransferRadio) {
+            creditCardRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    creditCardSection.style.display = 'block';
+                    bankTransferSection.style.display = 'none';
+                }
+            });
+            
+            bankTransferRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    creditCardSection.style.display = 'none';
+                    bankTransferSection.style.display = 'block';
+                }
+            });
+        }
         
-        bankTransferRadio.addEventListener('change', function() {
-            if (this.checked) {
-                creditCardSection.style.display = 'none';
-                bankTransferSection.style.display = 'block';
-                
-                // Quitar requerido de campos de tarjeta
-                document.getElementById('card_number').required = false;
-                document.getElementById('card_exp_month').required = false;
-                document.getElementById('card_exp_year').required = false;
-                document.getElementById('card_cvv').required = false;
-                
-                // Hacer campos requeridos de transferencia
-                document.getElementById('bank_name').required = true;
-                document.getElementById('account_number').required = true;
-                document.getElementById('transaction_reference').required = true;
-            }
-        });
-        
-        // Formatear número de tarjeta
+        // Formatear número de tarjeta (agregar espacios cada 4 dígitos)
         const cardNumberInput = document.getElementById('card_number');
-        cardNumberInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 16) value = value.substring(0, 16);
-            
-            // Agregar espacios cada 4 dígitos
-            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
-            e.target.value = value;
-        });
+        if (cardNumberInput) {
+            cardNumberInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 16) value = value.substring(0, 16);
+                value = value.replace(/(.{4})/g, '$1 ').trim();
+                e.target.value = value;
+            });
+        }
         
-        // Formatear CVV
-        const cvvInput = document.getElementById('card_cvv');
-        cvvInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 4) value = value.substring(0, 4);
-            e.target.value = value;
-        });
+        // =====================================================
+        // 🔥 ENVÍO DEL FORMULARIO - SIN BLOQUEAR
+        // =====================================================
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+                
+                if (!paymentMethod) {
+                    e.preventDefault();
+                    alert('❌ Selecciona un método de pago');
+                    return false;
+                }
+                
+                // Validaciones para tarjeta de crédito
+                if (paymentMethod.value === 'credit_card') {
+                    const cardNumber = document.getElementById('card_number')?.value.replace(/\s/g, '') || '';
+                    const expMonth = document.getElementById('card_exp_month')?.value || '';
+                    const expYear = document.getElementById('card_exp_year')?.value || '';
+                    const cvv = document.getElementById('card_cvv')?.value || '';
+                    
+                    if (cardNumber.length !== 16) {
+                        e.preventDefault();
+                        alert('❌ El número de tarjeta debe tener 16 dígitos');
+                        return false;
+                    }
+                    
+                    if (expMonth === '') {
+                        e.preventDefault();
+                        alert('❌ Selecciona el mes de expiración');
+                        return false;
+                    }
+                    
+                    if (expYear === '') {
+                        e.preventDefault();
+                        alert('❌ Selecciona el año de expiración');
+                        return false;
+                    }
+                    
+                    if (cvv.length < 3 || cvv.length > 4) {
+                        e.preventDefault();
+                        alert('❌ El CVV debe tener 3 o 4 dígitos');
+                        return false;
+                    }
+                }
+                
+                // Validaciones para transferencia bancaria
+                if (paymentMethod.value === 'bank_transfer') {
+                    const bankName = document.getElementById('bank_name')?.value.trim() || '';
+                    const accountNumber = document.getElementById('account_number')?.value.trim() || '';
+                    const reference = document.getElementById('transaction_reference')?.value.trim() || '';
+                    
+                    if (bankName === '') {
+                        e.preventDefault();
+                        alert('❌ Ingresa el nombre del banco');
+                        return false;
+                    }
+                    
+                    if (accountNumber === '') {
+                        e.preventDefault();
+                        alert('❌ Ingresa el número de cuenta');
+                        return false;
+                    }
+                    
+                    if (reference === '') {
+                        e.preventDefault();
+                        alert('❌ Ingresa la referencia de transferencia');
+                        return false;
+                    }
+                }
+                
+                // Validar nombre
+                const name = document.getElementById('billing_name')?.value.trim() || '';
+                if (name === '') {
+                    e.preventDefault();
+                    alert('❌ Ingresa tu nombre completo');
+                    return false;
+                }
+                
+                // Validar email
+                const email = document.getElementById('billing_email')?.value.trim() || '';
+                if (email === '' || !email.includes('@')) {
+                    e.preventDefault();
+                    alert('❌ Ingresa un correo electrónico válido');
+                    return false;
+                }
+                
+                // Mostrar loading (pero NO deshabilitar el envío)
+                if (payButton) {
+                    payButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> PROCESANDO PAGO...';
+                    payButton.style.opacity = '0.8';
+                }
+                
+                // Permitir envío del formulario
+                return true;
+            });
+        }
         
-        // Validar formulario antes de enviar
-        form.addEventListener('submit', function(e) {
-            // Validar fecha de vencimiento para tarjeta
-            if (creditCardRadio.checked) {
-                const currentYear = new Date().getFullYear();
-                const currentMonth = new Date().getMonth() + 1;
+        // Efecto ripple
+        if (payButton) {
+            payButton.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
                 
-                const expiryMonth = parseInt(document.getElementById('card_exp_month').value);
-                const expiryYear = parseInt(document.getElementById('card_exp_year').value);
+                const ripple = document.createElement('span');
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.4);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                    width: 100px;
+                    height: 100px;
+                    top: ${y - 50}px;
+                    left: ${x - 50}px;
+                    z-index: 9999;
+                `;
                 
-                if (expiryYear === currentYear && expiryMonth < currentMonth) {
-                    e.preventDefault();
-                    alert('La tarjeta ha expirado. Por favor, verifica la fecha de vencimiento.');
-                    return false;
-                }
+                this.appendChild(ripple);
                 
-                // Validar número de tarjeta (simplificado)
-                const cardNumber = document.getElementById('card_number').value.replace(/\s/g, '');
-                if (cardNumber.length !== 16) {
-                    e.preventDefault();
-                    alert('El número de tarjeta debe tener 16 dígitos.');
-                    return false;
-                }
-                
-                // Validar CVV
-                const cvv = document.getElementById('card_cvv').value;
-                if (cvv.length < 3 || cvv.length > 4) {
-                    e.preventDefault();
-                    alert('El CVV debe tener 3 o 4 dígitos.');
-                    return false;
-                }
-            }
-            
-            // Mostrar loading
-            payButton.disabled = true;
-            payButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> PROCESANDO PAGO...';
-            
-            return true;
-        });
+                setTimeout(() => {
+                    if (ripple && ripple.parentNode) ripple.remove();
+                }, 600);
+            });
+        }
+        
+        // CSS para ripple
+        if (!document.querySelector('#ripple-style')) {
+            const style = document.createElement('style');
+            style.id = 'ripple-style';
+            style.textContent = `@keyframes ripple { to { transform: scale(4); opacity: 0; } }`;
+            document.head.appendChild(style);
+        }
     });
 </script>
 @endsection
