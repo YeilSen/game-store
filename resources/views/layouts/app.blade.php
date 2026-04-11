@@ -7,10 +7,9 @@
 
     <title>Rayonic | Tienda de Juegos</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -23,892 +22,175 @@
             --dark-bg: #0a0a14;
             --darker-bg: #050510;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-                linear-gradient(to bottom, var(--darker-bg), var(--dark-bg));
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
+            font-family:'Inter',sans-serif;
+            background: radial-gradient(circle at 20% 50%, rgba(56,189,248,0.1), transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(139,92,246,0.1), transparent 50%),
+                        linear-gradient(to bottom, var(--darker-bg), var(--dark-bg));
+            min-height:100vh;
         }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            z-index: -1;
-        }
-        
-        .gaming-font {
-            font-family: 'Orbitron', sans-serif;
-        }
-        
+
         .navbar {
-            background: rgba(10, 10, 20, 0.9) !important;
+            background: rgba(10,10,20,0.9)!important;
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-            padding: 15px 0;
+            border-bottom:1px solid rgba(99,102,241,0.2);
         }
-        
-        .navbar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(34, 211, 238, 0.7), 
-                rgba(139, 92, 246, 0.7), 
-                transparent
-            );
-            z-index: 2;
-        }
-        
+
         .navbar-brand {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 1.8rem;
-            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
+            font-family:'Orbitron',sans-serif;
+            font-weight:900;
+            background: linear-gradient(45deg,var(--cyber-cyan),var(--cyber-purple));
+            -webkit-background-clip:text;
+            color:transparent;
         }
-        
-        .navbar-brand:hover {
-            text-shadow: 0 0 30px rgba(34, 211, 238, 0.5);
-            transform: translateY(-1px);
-        }
-        
+
         .nav-link {
-            color: #e2e8f0 !important;
-            font-weight: 500;
-            padding: 8px 15px !important;
-            margin: 0 5px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-            background: transparent;
+            color:#e2e8f0!important;
         }
-        
+
         .nav-link:hover {
-            color: white !important;
-            background: rgba(99, 102, 241, 0.2) !important;
-            transform: translateY(-2px);
+            color:white!important;
+            background: rgba(99,102,241,0.2);
+            border-radius:8px;
         }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-purple));
-            transition: width 0.3s ease;
-            border-radius: 2px;
-        }
-        
-        .nav-link:hover::after {
-            width: 80%;
-        }
-        
-        .nav-link.text-warning {
-            color: #fbbf24 !important;
-            background: rgba(251, 191, 36, 0.1);
-        }
-        
-        .nav-link.text-warning:hover {
-            background: rgba(251, 191, 36, 0.2);
-        }
-        
-        .home-btn {
-            background: rgba(34, 211, 238, 0.1);
-            border: 1px solid rgba(34, 211, 238, 0.3);
-            border-radius: 8px;
-            padding: 8px 15px;
-            color: #22d3ee;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin: 0 5px;
-        }
-        
-        .home-btn:hover {
-            background: rgba(34, 211, 238, 0.2);
-            color: #a5f3fc;
-            transform: translateY(-2px);
-            border-color: rgba(34, 211, 238, 0.5);
-        }
-        
+
         .clock {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(34, 211, 238, 0.3);
-            border-radius: 8px;
-            padding: 8px 15px;
-            font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #22d3ee;
-            letter-spacing: 1px;
-            box-shadow: 0 0 10px rgba(34, 211, 238, 0.1);
-            backdrop-filter: blur(5px);
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .clock i {
-            font-size: 0.9rem;
-        }
-        
-        .clock-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-left: 20px;
-        }
-        
-        .navbar .container {
-            display: flex;
-            align-items: center;
-        }
-        
-        .navbar-collapse {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .navbar-nav {
-            display: flex;
-            align-items: center;
-        }
-        
-        .nav-item {
-            display: flex;
-            align-items: center;
-        }
-        
-        .dropdown-menu {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            padding: 10px 0;
-        }
-        
-        .dropdown-item {
-            color: #e2e8f0;
-            padding: 10px 20px;
-            transition: all 0.3s ease;
-            border-radius: 6px;
-            margin: 2px 10px;
-            width: auto;
-        }
-        
-        .dropdown-item:hover {
-            background: linear-gradient(90deg, rgba(34, 211, 238, 0.1), rgba(139, 92, 246, 0.1));
-            color: white;
-            transform: translateX(5px);
-        }
-        
-        .dropdown-divider {
-            border-color: rgba(99, 102, 241, 0.2);
-            margin: 8px 0;
-        }
-        
-        .badge.bg-danger {
-            background: linear-gradient(45deg, #ef4444, #dc2626) !important;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-            font-size: 0.7rem;
-            padding: 4px 8px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .navbar-toggler {
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            padding: 5px 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .navbar-toggler:hover {
-            border-color: var(--cyber-cyan);
-            box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
-        }
-        
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='%2322d3ee' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z'/%3E%3C/svg");
-        }
-        
-        main {
-            padding-top: 20px !important;
-            min-height: calc(100vh - 180px);
-        }
-        
-        .glow-effect {
-            position: fixed;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.2;
-            z-index: -1;
-            pointer-events: none;
-        }
-        
-        .glow-cyan {
-            background: radial-gradient(circle, rgba(34, 211, 238, 0.7) 0%, transparent 70%);
-            top: 10%;
-            left: 10%;
-            animation: float 8s ease-in-out infinite;
-        }
-        
-        .glow-purple {
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.7) 0%, transparent 70%);
-            bottom: 10%;
-            right: 10%;
-            animation: float 10s ease-in-out infinite reverse;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-20px) scale(1.05); }
-        }
-        
-        @media (max-width: 992px) {
-            .clock-container {
-                margin-left: 0;
-                margin-top: 10px;
-                justify-content: center;
-            }
-            .navbar-collapse {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.5rem;
-            }
-            .nav-link {
-                margin: 5px 0;
-                padding: 10px 15px !important;
-                width: 100%;
-            }
-            .home-btn {
-                margin: 5px 0;
-                width: 100%;
-                justify-content: center;
-            }
-            .clock {
-                width: 100%;
-                justify-content: center;
-                margin: 5px 0;
-            }
-            .clock-container {
-                flex-direction: column;
-                width: 100%;
-                margin-top: 15px;
-            }
-            .dropdown-menu {
-                margin-top: 10px;
-                background: rgba(15, 23, 42, 0.98);
-                width: 100%;
-            }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            background: rgba(15,23,42,0.8);
+            border:1px solid rgba(34,211,238,0.3);
+            border-radius:8px;
+            padding:6px 12px;
+            color:#22d3ee;
+            font-family:'Orbitron';
         }
     </style>
 </head>
-<body>
-    <div class="glow-effect glow-cyan"></div>
-    <div class="glow-effect glow-purple"></div>
-    
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fade-in">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
-                🎮 Rayonic
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('catalog') }}">
-                            <i class="bi bi-grid"></i> Catálogo
-                        </a>
-                    </li>
-                    
-                    @auth
-                        @if(Auth::user()->is_admin)
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-warning" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-shield-check"></i> Panel Admin
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('admin.users.index') }}">
-                                            <i class="bi bi-people"></i> Usuarios
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('admin.bans.index') }}">
-                                            <i class="bi bi-shield-x"></i> Gestionar Baneos
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        @endif
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('cart.index') }}">
-                                <i class="bi bi-cart3"></i> Carrito
-                                @if(session('cart') && count(session('cart')) > 0)
-                                    <span class="badge bg-danger rounded-pill">{{ count(session('cart')) }}</span>
-                                @endif
-                            </a>
-                        </li>
-                    @endauth
-                </ul>
 
-                <div class="clock-container">
-                    <a href="{{ route('dashboard') }}" class="home-btn">
-                        <i class="bi bi-house-door-fill"></i>
-                        <span>Inicio</span>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+
+        <a class="navbar-brand" href="{{ url('/') }}">
+            🎮 Rayonic
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-collapse show" id="navbarNav">
+
+            <!-- IZQUIERDA -->
+            <ul class="navbar-nav me-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('catalog') }}">
+                        <i class="bi bi-grid"></i> Catálogo
                     </a>
-                    <div class="clock" id="liveClock">
-                        <i class="bi bi-clock"></i>
-                        <span id="clockTime">--:--:--</span>
-                        <span id="clockDate" class="ms-1" style="font-size: 0.75rem; color: #94a3b8;"></span>
-                    </div>
+                </li>
+
+                @auth
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('cart.index') }}">
+                        <i class="bi bi-cart3"></i> Carrito
+                        @if(session('cart'))
+                            <span class="badge bg-danger">{{ count(session('cart')) }}</span>
+                        @endif
+                    </a>
+                </li>
+
+                <!-- 🔥 BOTÓN MIS COMPRAS -->
+                <li class="nav-item">
+                    <a class="nav-link text-warning" href="{{ route('orders.index') }}">
+                        <i class="bi bi-bag-check"></i> Mis compras
+                    </a>
+                </li>
+
+                @if(Auth::user()->is_admin)
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-warning" data-bs-toggle="dropdown">
+                        <i class="bi bi-shield-check"></i> Admin
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('admin.users.index') }}">Usuarios</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.bans.index') }}">Baneos</a></li>
+                    </ul>
+                </li>
+                @endif
+                @endauth
+
+            </ul>
+
+            <!-- DERECHA -->
+            <div class="d-flex align-items-center gap-3">
+
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-house"></i> Inicio
+                </a>
+
+                <div class="clock">
+                    <i class="bi bi-clock"></i>
+                    <span id="clockTime">--:--:--</span>
+                    <small id="clockDate"></small>
                 </div>
 
                 <ul class="navbar-nav">
-                    @guest
-                        @if (Route::has('login'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">
-                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
-                                </a>
-                            </li>
-                        @endif
-                        @if (Route::has('register'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('register') }}">
-                                    <i class="bi bi-person-plus"></i> Registrarse
-                                </a>
-                            </li>
-                        @endif
+
+                   @guest
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">
+                                <i class="bi bi-person-plus"></i> Registro
+                            </a>
+                        </li>
                     @else
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle me-2"></i>
-                                <span>{{ Auth::user()->name }}</span>
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                {{ Auth::user()->name }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                        <i class="bi bi-person-gear me-2"></i> Mi Perfil
-                                    </a>
-                                </li>
+
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Perfil</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <form method="POST" action="{{ route('logout') }}" id="logout-form">
+                                    <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button class="dropdown-item" type="submit">
-                                            <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
-                                        </button>
+                                        <button class="dropdown-item">Cerrar sesión</button>
                                     </form>
                                 </li>
                             </ul>
                         </li>
                     @endguest
+
                 </ul>
+
             </div>
-        </div>
-    </nav>
 
-    <main class="py-4 fade-in">
-        <div class="container">
-            @yield('content')
-        </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
-    <script>
-        // =====================================================
-        // 🔥 ANIMACIONES DEL NAVBAR
-        // =====================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach((link, index) => {
-                link.style.animationDelay = `${index * 0.1}s`;
-            });
-        });
-
-        // =====================================================
-        // 🔥 RELOJ EN TIEMPO REAL
-        // =====================================================
-        function updateClock() {
-            const now = new Date();
-            
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            
-            const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-            const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-            
-            const dayName = days[now.getDay()];
-            const day = now.getDate();
-            const month = months[now.getMonth()];
-            const year = now.getFullYear();
-            const dateString = `${dayName} ${day} ${month} ${year}`;
-            
-            const clockTimeSpan = document.getElementById('clockTime');
-            const clockDateSpan = document.getElementById('clockDate');
-            
-            if (clockTimeSpan) clockTimeSpan.textContent = timeString;
-            if (clockDateSpan) clockDateSpan.textContent = dateString;
-        }
-        
-        updateClock();
-        setInterval(updateClock, 1000);
-
-        // =====================================================
-        // 🔥 PROTECCIÓN GLOBAL - BLOQUEA TODOS LOS BOTONES AL PRESIONAR UNO
-        // =====================================================
-        let isProcessing = false;
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // =====================================================
-            // 1️⃣ BLOQUEAR TODOS LOS BOTONES DE FORMULARIO
-            // =====================================================
-            const forms = document.querySelectorAll('form:not(#logout-form)');
-            
-            forms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    if (isProcessing) {
-                        e.preventDefault();
-                        alert('⏳ Espera a que termine la acción actual...');
-                        return false;
-                    }
-                    
-                    isProcessing = true;
-                    
-                    // Deshabilitar TODOS los botones de la página
-                    disableAllInteractiveElements();
-                    
-                    const submitButton = this.querySelector('button[type="submit"]');
-                    if (submitButton) {
-                        const originalText = submitButton.innerHTML;
-                        if (!submitButton.hasAttribute('data-original-text')) {
-                            submitButton.setAttribute('data-original-text', originalText);
-                        }
-                        submitButton.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Procesando...`;
-                        submitButton.style.opacity = '0.8';
-                    }
-                    
-                    // Timeout de seguridad (10 segundos)
-                    setTimeout(() => {
-                        if (isProcessing) {
-                            enableAllInteractiveElements();
-                            isProcessing = false;
-                            if (submitButton) {
-                                submitButton.innerHTML = submitButton.getAttribute('data-original-text');
-                                submitButton.style.opacity = '1';
-                            }
-                        }
-                    }, 10000);
-                    
-                    return true;
-                });
-            });
-            
-            // =====================================================
-            // 2️⃣ BLOQUEAR TODOS LOS ENLACES PELIGROSOS
-            // =====================================================
-            const dangerousLinks = document.querySelectorAll('a[onclick*="confirm"], a.delete-link, .btn-danger, [data-confirm]');
-            
-            dangerousLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (isProcessing) {
-                        e.preventDefault();
-                        alert('⏳ Espera a que termine la acción actual...');
-                        return false;
-                    }
-                    
-                    isProcessing = true;
-                    disableAllInteractiveElements();
-                    
-                    setTimeout(() => {
-                        if (isProcessing) {
-                            enableAllInteractiveElements();
-                            isProcessing = false;
-                        }
-                    }, 3000);
-                    
-                    return true;
-                });
-            });
-            
-            // =====================================================
-            // 3️⃣ BLOQUEAR TODOS LOS BOTONES DE NAVEGACIÓN
-            // =====================================================
-            const navButtons = document.querySelectorAll('a.nav-link:not(.dropdown-toggle), .home-btn');
-            
-            navButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    if (isProcessing) {
-                        e.preventDefault();
-                        alert('⏳ Espera a que termine la acción actual...');
-                        return false;
-                    }
-                    
-                    isProcessing = true;
-                    disableAllInteractiveElements();
-                    
-                    setTimeout(() => {
-                        if (isProcessing) {
-                            enableAllInteractiveElements();
-                            isProcessing = false;
-                        }
-                    }, 3000);
-                    
-                    return true;
-                });
-            });
-            
-            // =====================================================
-            // FUNCIONES PARA DES/HABILITAR ELEMENTOS
-            // =====================================================
-            function disableAllInteractiveElements() {
-                // Deshabilitar todos los botones de formulario
-                document.querySelectorAll('button[type="submit"], button:not([type="button"]), input[type="submit"]').forEach(el => {
-                    el.disabled = true;
-                    el.style.opacity = '0.6';
-                    el.style.cursor = 'wait';
-                });
-                
-                // Deshabilitar todos los enlaces con clase .btn
-                document.querySelectorAll('a.btn, .home-btn, .nav-link').forEach(el => {
-                    el.style.pointerEvents = 'none';
-                    el.style.opacity = '0.6';
-                    el.style.cursor = 'wait';
-                });
-                
-                // Agregar clase global
-                document.body.style.cursor = 'wait';
-            }
-            
-            function enableAllInteractiveElements() {
-                // Re-habilitar todos los botones de formulario
-                document.querySelectorAll('button[type="submit"], button:not([type="button"]), input[type="submit"]').forEach(el => {
-                    el.disabled = false;
-                    el.style.opacity = '1';
-                    el.style.cursor = 'pointer';
-                });
-                
-                // Re-habilitar todos los enlaces
-                document.querySelectorAll('a.btn, .home-btn, .nav-link').forEach(el => {
-                    el.style.pointerEvents = 'auto';
-                    el.style.opacity = '1';
-                    el.style.cursor = 'pointer';
-                });
-                
-                // Quitar clase global
-                document.body.style.cursor = 'default';
-            }
-            
-            // Exponer funciones globalmente por si se necesitan
-            window.enableAllButtons = enableAllInteractiveElements;
-            window.disableAllButtons = disableAllInteractiveElements;
-        });
-    </script>
-
-    <style>
-        /* Spinner personalizado */
-        .spinner-border-sm {
-            width: 1rem;
-            height: 1rem;
-            border-width: 0.15em;
-        }
-        
-        /* Cursor de espera en toda la página */
-        body.waiting {
-            cursor: wait !important;
-        }
-        
-        /* Deshabilitar todos los elementos interactivos */
-        .global-disabled {
-            pointer-events: none !important;
-            opacity: 0.6 !important;
-        }
-    </style>
-
-    {{-- ===================================================== --}}
-    {{-- 🍪 AVISO DE COOKIES --}}
-    {{-- ===================================================== --}}
-    <div id="cookieConsent" class="cookie-consent" style="display: none;">
-        <div class="cookie-content">
-            <div class="cookie-icon">
-                <i class="bi bi-cookie"></i>
-            </div>
-            <div class="cookie-text">
-                <h4>🍪 Aviso de Cookies</h4>
-                <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, realizar análisis y mostrarte contenido personalizado.</p>
-                <p class="cookie-small">Al hacer clic en "Aceptar", consientes el uso de TODAS las cookies.</p>
-            </div>
-            <div class="cookie-buttons">
-                <button id="acceptCookies" class="cookie-btn accept">Aceptar</button>
-                <button id="declineCookies" class="cookie-btn decline">Rechazar</button>
-                <a href="{{ url('/cookies-policy') }}" class="cookie-link">Más información</a>
-            </div>
         </div>
     </div>
+</nav>
 
-    <style>
-        .cookie-consent {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(10, 10, 20, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(34, 211, 238, 0.3);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 211, 238, 0.1);
-            z-index: 9999;
-            animation: slideUp 0.5s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .cookie-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 20px 25px;
-        }
-        
-        .cookie-icon {
-            font-size: 2.5rem;
-            color: #22d3ee;
-            background: rgba(34, 211, 238, 0.1);
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        
-        .cookie-text {
-            flex: 1;
-        }
-        
-        .cookie-text h4 {
-            color: #22d3ee;
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 8px;
-            font-size: 1.2rem;
-        }
-        
-        .cookie-text p {
-            color: #cbd5e1;
-            margin: 0;
-            font-size: 0.9rem;
-        }
-        
-        .cookie-small {
-            font-size: 0.75rem !important;
-            color: #94a3b8 !important;
-            margin-top: 5px !important;
-        }
-        
-        .cookie-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .cookie-btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-        
-        .cookie-btn.accept {
-            background: linear-gradient(45deg, #22d3ee, #6366f1);
-            color: #0f172a;
-        }
-        
-        .cookie-btn.accept:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(34, 211, 238, 0.4);
-        }
-        
-        .cookie-btn.decline {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fecaca;
-        }
-        
-        .cookie-btn.decline:hover {
-            background: rgba(239, 68, 68, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        .cookie-link {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-        }
-        
-        .cookie-link:hover {
-            color: #22d3ee;
-            text-decoration: underline;
-        }
-        
-        @media (max-width: 768px) {
-            .cookie-content {
-                flex-direction: column;
-                text-align: center;
-                padding: 20px;
-            }
-            .cookie-icon { margin: 0 auto; }
-            .cookie-buttons { justify-content: center; }
-        }
-    </style>
+<main class="py-4">
+    @yield('content')
+</main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cookieConsent = document.getElementById('cookieConsent');
-            const acceptBtn = document.getElementById('acceptCookies');
-            const declineBtn = document.getElementById('declineCookies');
-            const cookieLink = document.querySelector('.cookie-link');
-            
-            function checkCookieConsent() {
-                const cookiesAccepted = localStorage.getItem('cookies_accepted');
-                const cookiesDeclined = localStorage.getItem('cookies_declined');
-                if (cookiesAccepted === 'true' || cookiesDeclined === 'true') {
-                    cookieConsent.style.display = 'none';
-                } else {
-                    cookieConsent.style.display = 'block';
-                }
-            }
-            
-            function acceptCookies() {
-                localStorage.setItem('cookies_accepted', 'true');
-                localStorage.removeItem('cookies_declined');
-                cookieConsent.style.display = 'none';
-                showToast('✅ Has aceptado las cookies', 'success');
-            }
-            
-            function declineCookies() {
-                localStorage.setItem('cookies_declined', 'true');
-                localStorage.removeItem('cookies_accepted');
-                cookieConsent.style.display = 'none';
-                showToast('ℹ️ Solo se usarán cookies esenciales', 'info');
-            }
-            
-            function showToast(message, type = 'info') {
-                const toast = document.createElement('div');
-                toast.style.cssText = `
-                    position: fixed;
-                    bottom: 100px;
-                    right: 20px;
-                    background: ${type === 'success' ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'rgba(15, 23, 42, 0.95)'};
-                    color: white;
-                    padding: 12px 20px;
-                    border-radius: 12px;
-                    font-size: 0.9rem;
-                    z-index: 10000;
-                    animation: slideInRight 0.3s ease-out;
-                    border: 1px solid rgba(255,255,255,0.2);
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-                `;
-                toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i> ${message}`;
-                document.body.appendChild(toast);
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transition = 'opacity 0.3s';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            }
-            
-            const style = document.createElement('style');
-            style.textContent = `@keyframes slideInRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
-            document.head.appendChild(style);
-            
-            if (acceptBtn) acceptBtn.addEventListener('click', acceptCookies);
-            if (declineBtn) declineBtn.addEventListener('click', declineCookies);
-            if (cookieLink) cookieLink.addEventListener('click', function(e) { return true; });
-            
-            checkCookieConsent();
-        });
-    </script>
+<script>
+function updateClock(){
+    const now = new Date();
+    document.getElementById('clockTime').textContent = now.toLocaleTimeString();
+    document.getElementById('clockDate').textContent = now.toLocaleDateString();
+}
+setInterval(updateClock,1000);
+updateClock();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

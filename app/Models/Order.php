@@ -32,29 +32,37 @@ class Order extends Model
         'total_amount' => 'decimal:2',
     ];
 
-    // Relación con usuario
+    /*
+    |--------------------------------------------------------------------------
+    | RELACIONES
+    |--------------------------------------------------------------------------
+    */
+
+    // Usuario dueño de la orden
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relación con items
+    // Productos comprados
     public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | MÉTODOS AUXILIARES
+    |--------------------------------------------------------------------------
+    */
+
     // Generar número de orden único
     public static function generateOrderNumber()
     {
-        $prefix = 'ORD-';
-        $date = now()->format('Ymd');
-        $random = strtoupper(substr(uniqid(), -6));
-        
-        return $prefix . $date . '-' . $random;
+        return 'ORD-' . now()->format('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
     }
 
-    // Estados posibles
+    // Estados de orden
     public static function getStatuses()
     {
         return [
@@ -66,6 +74,7 @@ class Order extends Model
         ];
     }
 
+    // Estados de pago
     public static function getPaymentStatuses()
     {
         return [
@@ -75,4 +84,26 @@ class Order extends Model
             'refunded' => 'Reembolsado'
         ];
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSORS (para mostrar bonito en vistas)
+    |--------------------------------------------------------------------------
+    */
+
+    public function getFormattedTotalAttribute()
+    {
+        return '$' . number_format($this->total_amount, 2);
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        return self::getStatuses()[$this->status] ?? $this->status;
+    }
+
+    public function getPaymentStatusLabelAttribute()
+    {
+        return self::getPaymentStatuses()[$this->payment_status] ?? $this->payment_status;
+    }
+    
 }

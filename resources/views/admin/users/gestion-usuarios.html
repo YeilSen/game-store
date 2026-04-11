@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gestión de Usuarios | Panel Administrativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #e9f0fc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Tarjeta principal con sombra elegante */
+        .card {
+            max-width: 1280px;
+            width: 100%;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        /* Contenido interior con padding */
+        .card-inner {
+            padding: 2rem 2rem 2.5rem 2rem;
+        }
+
+        /* Encabezado */
+        .header-section {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #eef2f8;
+            padding-bottom: 1.25rem;
+        }
+
+        .header-section h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1E2A3E, #0f2b3d);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .sub {
+            color: #4a5b6e;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f0f4fa;
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 500;
+            color: #1f6392;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .back-link:hover {
+            background: #e2eaf3;
+            color: #0a4b70;
+            transform: translateX(-3px);
+        }
+
+        /* CONTENEDOR TABLA CON BORDES REDONDEADOS Y OVERFLOW */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 28px;
+            /* Sombra interna sutil para resaltar el redondeo */
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Tabla principal: bordes redondeados gracias a border-collapse y border-radius */
+        .user-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Estilo de celdas y cabeceras */
+        .user-table th,
+        .user-table td {
+            padding: 1rem 1.2rem;
+            text-align: left;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* Cabecera: fondo oscuro suave con tipografía semi-bold */
+        .user-table th {
+            background: #1f2c3e;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        /* Primera celda de cabecera - ya redondeado en th:first-child */
+        .user-table th:first-child {
+            border-top-left-radius: 28px;
+        }
+        .user-table th:last-child {
+            border-top-right-radius: 28px;
+        }
+
+        /* Filas con separación sutil */
+        .user-table tbody tr {
+            transition: background 0.2s;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .user-table tbody tr:hover {
+            background: #fafcff;
+        }
+
+        .user-table td {
+            border-bottom: 1px solid #eef2f8;
+            color: #1f2a3e;
+            font-weight: 500;
+        }
+
+        /* Elimina borde inferior en la última fila para redondeo inferior limpio */
+        .user-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* redondeo inferior en la última fila de celdas */
+        .user-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 28px;
+        }
+        .user-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 28px;
+        }
+
+        /* ID badge sutil */
+        .id-badge {
+            background: #eef2ff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 40px;
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-block;
+            color: #1f3b64;
+        }
+
+        /* Email truncado responsivo */
+        .email-cell {
+            word-break: break-all;
+            max-width: 240px;
+        }
+
+        /* Fecha estilo chip */
+        .date-chip {
+            background: #f1f5f9;
+            padding: 0.25rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            display: inline-block;
+            font-weight: 500;
+            color: #2c3e66;
+        }
+
+        /* Grupo de botones: contenedor flexible */
+        .action-buttons {
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* ESTILOS DE BOTONES REDONDEADOS CON EFECTOS BRILLO (GLOW) */
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.45rem 1rem;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            letter-spacing: 0.3px;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Botón Historial - azul */
+        .btn-historial {
+            background: #eef2ff;
+            color: #1e4a76;
+            border: 1px solid #cddff5;
+        }
+
+        /* Botón Editar - ámbar / naranja */
+        .btn-editar {
+            background: #fff6e5;
+            color: #b85c00;
+            border: 1px solid #ffe0b5;
+        }
+
+        /* Botón Eliminar - rojo suave */
+        .btn-eliminar {
+            background: #ffe8ec;
+            color: #bc1c2e;
+            border: 1px solid #ffcdd5;
+        }
+
+        /* Efecto HOVER + GLOW (brillo) y ligera elevación */
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Brillo especifico por color + efecto de brillo al hover (glow) */
+        .btn-historial:hover {
+            background: #1e4a76;
+            color: white;
+            border-color: #1e4a76;
+            box-shadow: 0 0 12px rgba(30, 74, 118, 0.6), 0 6px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-editar:hover {
+            background: #e67e22;
+            color: white;
+            border-color: #e67e22;
+            box-shadow: 0 0 14px rgba(230, 126, 34, 0.6), 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-eliminar:hover {
+            background: #c0392b;
+            color: white;
+            border-color: #c0392b;
+            box-shadow: 0 0 14px rgba(192, 57, 43, 0.55), 0 5px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* EFECTO CLICK (activo) - brillo intenso y reducción momentánea */
+        .btn-action:active {
+            transform: scale(0.96);
+            transition: 0.05s linear;
+            filter: brightness(1.08);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Para mantener accesibilidad focus */
+        .btn-action:focus-visible {
+            outline: 2px solid #005fcc;
+            outline-offset: 2px;
+        }
+
+        /* contador de registros badge */
+        .counter-badge {
+            background: #1e2a3e0f;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #2c5270;
+        }
+
+        /* responsive: ajustar padding en móvil */
+        @media (max-width: 680px) {
+            .card-inner {
+                padding: 1.25rem;
+            }
+            .user-table th, 
+            .user-table td {
+                padding: 0.75rem 0.85rem;
+            }
+            .action-buttons {
+                gap: 0.45rem;
+            }
+            .btn-action {
+                padding: 0.35rem 0.8rem;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Mensaje demo para simular acciones sin recarga (puro efecto visual) */
+        .toast-msg {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: #1f2c3e;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            background: #0f172ad9;
+        }
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="card-inner">
+        <div class="header-section">
+            <h1>📋 GESTIÓN DE USUARIOS</h1>
+            <div class="sub">
+                <span>Administra los usuarios registrados en la plataforma</span>
+                <a href="#" class="back-link" id="backCatalogBtn">← Volver al Catálogo</a>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>NOMBRE</th>
+                        <th>EMAIL</th>
+                        <th>FECHA</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="id-badge">#2</span></td>
+                        <td>Juan Raymundo</td>
+                        <td class="email-cell">juanraymundocuen690@gmail.com</td>
+                        <td><span class="date-chip">10/04/2026</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="#" class="btn-action btn-historial" data-action="historial">📜 Historial</a>
+                                <a href="#" class="btn-action btn-editar" data-action="editar">✏️ Editar</a>
+                                <a href="#" class="btn-action btn-eliminar" data-action="eliminar">🗑️ Eliminar</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Podrías agregar más filas con el mismo estilo redondeado -->
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+            <div class="counter-badge">👥 USUARIOS REGISTRADOS (1)</div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast para simular feedback visual -->
+<div id="actionToast" class="toast-msg">✨ Acción realizada</div>
+
+<script>
+    (function() {
+        // Obtener elementos de botones dentro de la tabla
+        const historialBtn = document.querySelector('.btn-historial');
+        const editarBtn = document.querySelector('.btn-editar');
+        const eliminarBtn = document.querySelector('.btn-eliminar');
+        const backBtn = document.getElementById('backCatalogBtn');
+        const toast = document.getElementById('actionToast');
+
+        // Función para mostrar mensaje temporal
+        function showMessage(msg, isError = false) {
+            toast.textContent = msg || (isError ? '⚠️ Operación simulada' : '✅ Acción realizada');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1800);
+        }
+
+        // Simular acciones con efecto de brillo + clic (ya tienen animación CSS, añadimos feedback)
+        if (historialBtn) {
+            historialBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showMessage('📜 Historial de Juan Raymundo — visualizado (demo)');
+                // Pequeño efecto extra: simular foco
+                historialBtn.style.transform = 'scale(0.98)';
+                setTimeout(() => { if(historialBtn) historialBtn.style.transform = ''; }, 120);
+            });
+        }
+
+        if (editarBtn) {
+            editarBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showMessage('✏️ Editar usuario: Juan Raymundo (abriría formulario)');
+                editarBtn.style.transform = 'scale(0.98)';
+                setTimeout(() => { if(editarBtn) editarBtn.style.transform = ''; }, 120);
+            });
+        }
+
+        if (eliminarBtn) {
+            eliminarBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showMessage('🗑️ Usuario #2 eliminado (simulación — solo efecto visual)', false);
+                eliminarBtn.style.transform = 'scale(0.98)';
+                setTimeout(() => { if(eliminarBtn) eliminarBtn.style.transform = ''; }, 120);
+                // Opcional: podríamos deshabilitar o eliminar fila, pero por requerimiento no se pide borrado real, solo estética y brillo.
+                // si se quiere eliminar visualmente se puede, pero mantiene coherencia con la maqueta original.
+            });
+        }
+
+        // Volver al catálogo con mensaje amigable (simula navegación)
+        if (backBtn) {
+            backBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showMessage('🔙 Navegando al catálogo... (demo)');
+                // Animación extra
+                backBtn.style.transform = 'translateX(-4px)';
+                setTimeout(() => { if(backBtn) backBtn.style.transform = ''; }, 200);
+            });
+        }
+
+        // Efecto adicional de brillo extra mediante CSS dinámico? Los botones ya tienen box-shadow glow en hover.
+        // También se asegura que el redondeo y brillo al hacer clic funciona con la propiedad :active que ya definimos.
+        // Añadimos listeners para prevenir comportamiento por defecto de anclas.
+        const allActionLinks = document.querySelectorAll('.btn-action');
+        allActionLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                // evitamos cualquier salto de página por #
+                e.preventDefault();
+                // ya cada botón tiene su propio mensaje; pero para evitar propagación redundante:
+                // si alguno no tuviera listener personal (como otros futuros) mostramos mensaje genérico.
+                if(!link.hasAttribute('data-listener-custom')) {
+                    // pero ya asignamos individuales, esto es por si agregamos mas dinámicamente.
+                }
+            });
+        });
+        // Marcador para evitar doble mensaje en algunos casos (opcional)
+        // Como los tres botones tienen su propio listener, no hay conflicto.
+        
+        // Para dar sensación de brillo adicional al hacer clic, la clase :active ya tiene filtro de brillo y escala.
+        // Todo bien.
+        console.log('✅ Tabla redondeada + botones con efecto GLOW y click brillo activado');
+    })();
+</script>
+
+<!-- Nota: Se cumple con:
+     1. Tabla completamente redondeada (border-radius en contenedor y celdas extremas).
+     2. Botones con bordes redondeados (border-radius 60px), efectos hover con brillo (box-shadow glow) y color respectivo.
+     3. Al pasar el cursor (hover) brillo según color respectivo: historial azul, editar naranja, eliminar rojo.
+     4. Al hacer clic: efecto de brillo intensificado + escala (transform: scale) para sensación de click brillante.
+     5. Diseño fiel a la imagen original pero mejorado visualmente, manteniendo datos: ID #2, nombre, correo y fecha.
+-->
+</body>
+</html>
