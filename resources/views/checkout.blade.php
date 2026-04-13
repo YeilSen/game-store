@@ -377,7 +377,21 @@
                                             {{ $item['name'] }} x{{ $item['quantity'] }}
                                         </span>
                                         <span style="color: #22d3ee; font-weight: 600;">
-                                            ${{ number_format($item['price'] * $item['quantity'], 2) }}
+                                            @php
+                                                $price = $item['price'] ?? 0;
+                                                $original = $item['original_price'] ?? $price;
+                                                $discount = $item['discount_percentage'] ?? 0;
+                                            @endphp
+
+                                            @if($discount > 0)
+                                                <div style="color:#f87171; text-decoration: line-through; font-size: 0.9rem;">
+                                                    ${{ number_format($original, 2) }}
+                                                </div>
+                                            @endif
+
+                                            <div>
+                                                ${{ number_format($price, 2) }}
+                                            </div>                                        
                                         </span>
                                     </div>
                                 @endforeach

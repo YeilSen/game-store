@@ -12,8 +12,10 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'game_id',
+        'game_name',
         'quantity',
         'unit_price',
+        'image',
         'subtotal'
     ];
 

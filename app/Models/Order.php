@@ -106,4 +106,19 @@ class Order extends Model
         return self::getPaymentStatuses()[$this->payment_status] ?? $this->payment_status;
     }
     
+    // Accessor para total (mantiene compatibilidad)
+    public function getTotalAttribute()
+    {
+        return $this->total_amount;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MÉTODO PARA VERIFICAR SI LA ORDEN ESTÁ PAGADA Y COMPLETADA
+    |--------------------------------------------------------------------------
+    */
+    public function isPaidAndCompleted()
+    {
+        return $this->status === 'completed' && $this->payment_status === 'paid';
+    }
 }

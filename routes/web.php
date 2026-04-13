@@ -8,6 +8,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,28 +24,47 @@ Route::get('/', [GameController::class, 'index'])->name('catalog');
 */
 Route::middleware('auth')->group(function () {
 
-    // CARRITO
+    // ========================
+    // 🛒 CARRITO
+    // ========================
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
-    // CHECKOUT
+    // ========================
+    // 💳 CHECKOUT
+    // ========================
     Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout');
     Route::post('/checkout/process', [CheckoutController::class, 'processPayment'])->name('checkout.process');
     Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 
-    // ÓRDENES (HISTORIAL)
+    // ========================
+    // 🎮 ÓRDENES (USUARIO)
+    // ========================
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/mis-compras', [OrderController::class, 'myOrders'])->name('orders.my');
+    Route::get('/orders/stats', [OrderController::class, 'stats'])->name('orders.stats');
+    
+    // 🎫 TICKET (NUEVA RUTA)
+    Route::get('/orders/{order}/ticket', [OrderController::class, 'showTicket'])->name('orders.ticket');
 
-    // PERFIL
+    // ========================
+    // 📄 FACTURA PDF
+    // ========================
+    Route::get('/invoice/{id}', [InvoiceController::class, 'generate'])->name('invoice.generate');
+
+    // ========================
+    // 👤 PERFIL
+    // ========================
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // DASHBOARD
+    // ========================
+    // 🏠 DASHBOARD
+    // ========================
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -57,7 +77,9 @@ Route::middleware('auth')->group(function () {
 */
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // JUEGOS
+    // ========================
+    // 🎮 JUEGOS
+    // ========================
     Route::get('/games', [AdminController::class, 'listGames'])->name('games.index');
     Route::get('/games/create', [AdminController::class, 'createGame'])->name('games.create');
     Route::post('/games', [AdminController::class, 'storeGame'])->name('games.store');
@@ -65,19 +87,30 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/games/{id}', [AdminController::class, 'updateGame'])->name('games.update');
     Route::delete('/games/{id}', [AdminController::class, 'destroy'])->name('games.delete');
 
-    // USUARIOS
+    // ========================
+    // 👥 USUARIOS
+    // ========================
     Route::get('/users', [AdminController::class, 'index'])->name('users.index');
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
 
-    // LOGS
+    // ========================
+    // 📊 LOGS
+    // ========================
     Route::get('/logs', [AdminController::class, 'viewLoginLogs'])->name('logs.index');
 
-    // BANEOS
+    // ========================
+    // 🚫 BANEOS
+    // ========================
     Route::get('/bans', [BanController::class, 'index'])->name('bans.index');
     Route::post('/bans/unban', [BanController::class, 'unban'])->name('bans.unban');
 
-    // ÓRDENES ADMIN
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
+    // ========================
+    // 📦 ÓRDENES ADMIN
+    // ========================
+    Route::get('/orders', [OrderController::class, 'index'])->name('admin.orders'); // 👈 CAMBIÉ EL NOMBRE para no confundir
+
+    // DASHBOARD TIPO STEAM
+    Route::get('/stats', [OrderController::class, 'stats'])->name('admin.orders.stats');
 });
 
 /*
