@@ -78,6 +78,26 @@
                                         {{ Auth::user()->is_admin ? 'ADMINISTRADOR' : 'JUGADOR' }}
                                     </span>
                                 </div>
+                                
+                                {{-- 🔥 BOTÓN DE HISTORIAL DE COMPRAS --}}
+                                <div class="mt-4">
+                                    <a href="{{ route('profile.orders') }}" class="btn w-100" style="
+                                        background: linear-gradient(45deg, #22d3ee, #6366f1);
+                                        border: none;
+                                        color: #0f172a;
+                                        font-weight: 700;
+                                        padding: 12px;
+                                        border-radius: 12px;
+                                        transition: all 0.3s ease;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        gap: 8px;
+                                    ">
+                                        <i class="bi bi-clock-history"></i>
+                                        VER HISTORIAL DE COMPRAS
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

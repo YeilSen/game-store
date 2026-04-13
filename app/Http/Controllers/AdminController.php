@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\LoginLog;
 use App\Models\User; 
 use App\Models\Game;
+use App\Models\Order;
 use Illuminate\Support\Facades\DB; 
 use Carbon\Carbon;
 
@@ -146,8 +147,6 @@ class AdminController extends Controller
     // 🔥 NUEVAS FUNCIONES PARA GESTIÓN DE JUEGOS 🔥
     // =====================================================
 
-   
-
     /**
      * Mostrar formulario para editar juego
      */
@@ -287,5 +286,35 @@ class AdminController extends Controller
         $game->save();
 
         return redirect()->back()->with('success', 'Descuento eliminado');
+    }
+
+    // =====================================================
+    // 🔥 NUEVAS FUNCIONES PARA GESTIÓN DE PEDIDOS 🔥
+    // =====================================================
+
+    /**
+     * Mostrar todos los pedidos del sistema (para admin)
+     */
+    public function allOrders()
+    {
+        $orders = Order::with('user', 'items.game')
+                       ->orderBy('created_at', 'desc')
+                       ->paginate(15);
+        
+        return view('admin.orders.index', compact('orders'));
+    }
+
+    /**
+     * Mostrar pedidos de un usuario específico (para admin)
+     */
+    public function userOrders($id)
+    {
+        $user = User::findOrFail($id);
+        $orders = Order::where('user_id', $id)
+                       ->with('items.game')
+                       ->orderBy('created_at', 'desc')
+                       ->paginate(10);
+        
+        return view('admin.orders.user-orders', compact('user', 'orders'));
     }
 }

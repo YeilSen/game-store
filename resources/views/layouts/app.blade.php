@@ -58,6 +58,7 @@
             font-family: 'Orbitron', sans-serif;
         }
         
+        /* NAVBAR ESTILIZADA */
         .navbar {
             background: rgba(10, 10, 20, 0.9) !important;
             backdrop-filter: blur(10px);
@@ -100,6 +101,7 @@
             transform: translateY(-1px);
         }
         
+        /* 🔥 ESTILOS UNIFORMES PARA TODOS LOS BOTONES */
         .nav-link {
             color: #e2e8f0 !important;
             font-weight: 500;
@@ -143,6 +145,7 @@
             background: rgba(251, 191, 36, 0.2);
         }
         
+        /* 🔥 BOTÓN DE INICIO (mismo estilo que los demás) */
         .home-btn {
             background: rgba(34, 211, 238, 0.1);
             border: 1px solid rgba(34, 211, 238, 0.3);
@@ -166,6 +169,7 @@
             border-color: rgba(34, 211, 238, 0.5);
         }
         
+        /* 🔥 RELOJ */
         .clock {
             background: rgba(15, 23, 42, 0.8);
             border: 1px solid rgba(34, 211, 238, 0.3);
@@ -188,6 +192,7 @@
             font-size: 0.9rem;
         }
         
+        /* 🔥 CONTENEDOR DEL RELOJ Y BOTÓN INICIO */
         .clock-container {
             display: flex;
             align-items: center;
@@ -195,6 +200,7 @@
             margin-left: 20px;
         }
         
+        /* 🔥 NAVBAR CENTRADO */
         .navbar .container {
             display: flex;
             align-items: center;
@@ -216,6 +222,7 @@
             align-items: center;
         }
         
+        /* DROPDOWN ESTILIZADO */
         .dropdown-menu {
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
@@ -245,6 +252,7 @@
             margin: 8px 0;
         }
         
+        /* BADGE PARA EL CARRITO */
         .badge.bg-danger {
             background: linear-gradient(45deg, #ef4444, #dc2626) !important;
             box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
@@ -258,6 +266,7 @@
             50% { transform: scale(1.1); }
         }
         
+        /* TOGGLER BUTTON */
         .navbar-toggler {
             border: 1px solid rgba(99, 102, 241, 0.3);
             padding: 5px 10px;
@@ -273,11 +282,13 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='%2322d3ee' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z'/%3E%3C/svg");
         }
         
+        /* CONTENIDO PRINCIPAL */
         main {
             padding-top: 20px !important;
             min-height: calc(100vh - 180px);
         }
         
+        /* EFECTOS DE GLOW PARA EL FONDO */
         .glow-effect {
             position: fixed;
             width: 300px;
@@ -308,12 +319,14 @@
             50% { transform: translateY(-20px) scale(1.05); }
         }
         
+        /* RESPONSIVIDAD */
         @media (max-width: 992px) {
             .clock-container {
                 margin-left: 0;
                 margin-top: 10px;
                 justify-content: center;
             }
+            
             .navbar-collapse {
                 flex-direction: column;
                 align-items: flex-start;
@@ -324,26 +337,31 @@
             .navbar-brand {
                 font-size: 1.5rem;
             }
+            
             .nav-link {
                 margin: 5px 0;
                 padding: 10px 15px !important;
                 width: 100%;
             }
+            
             .home-btn {
                 margin: 5px 0;
                 width: 100%;
                 justify-content: center;
             }
+            
             .clock {
                 width: 100%;
                 justify-content: center;
                 margin: 5px 0;
             }
+            
             .clock-container {
                 flex-direction: column;
                 width: 100%;
                 margin-top: 15px;
             }
+            
             .dropdown-menu {
                 margin-top: 10px;
                 background: rgba(15, 23, 42, 0.98);
@@ -351,6 +369,7 @@
             }
         }
         
+        /* ANIMACIÓN DE ENTRADA PARA ELEMENTOS */
         .fade-in {
             animation: fadeIn 0.5s ease-out;
         }
@@ -368,9 +387,11 @@
     </style>
 </head>
 <body>
+    {{-- EFECTOS DE FONDO --}}
     <div class="glow-effect glow-cyan"></div>
     <div class="glow-effect glow-purple"></div>
     
+    {{-- BARRA DE NAVEGACIÓN --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fade-in">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
@@ -404,6 +425,12 @@
                                             <i class="bi bi-shield-x"></i> Gestionar Baneos
                                         </a>
                                     </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.orders.index') }}">
+                                            <i class="bi bi-receipt"></i> Todos los Pedidos
+                                        </a>
+                                    </li>
+
                                 </ul>
                             </li>
                         @endif
@@ -419,6 +446,7 @@
                     @endauth
                 </ul>
 
+                {{-- 🔥 BOTÓN INICIO Y RELOJ --}}
                 <div class="clock-container">
                     <a href="{{ route('dashboard') }}" class="home-btn">
                         <i class="bi bi-house-door-fill"></i>
@@ -431,6 +459,7 @@
                     </div>
                 </div>
 
+                {{-- RUTAS DE AUTENTICACIÓN Y PERFIL --}}
                 <ul class="navbar-nav">
                     @guest
                         @if (Route::has('login'))
@@ -476,12 +505,14 @@
         </div>
     </nav>
 
+    {{-- CONTENIDO PRINCIPAL --}}
     <main class="py-4 fade-in">
         <div class="container">
             @yield('content')
         </div>
     </main>
 
+    {{-- Scripts de Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
     <script>
@@ -526,174 +557,235 @@
         setInterval(updateClock, 1000);
 
         // =====================================================
-        // 🔥 PROTECCIÓN GLOBAL - BLOQUEA TODOS LOS BOTONES AL PRESIONAR UNO
+        // 🔥 PROTECCIÓN CONTRA DOBLE CLIC - VERSIÓN COMPLETA
         // =====================================================
-        let isProcessing = false;
-        
         document.addEventListener('DOMContentLoaded', function() {
             
             // =====================================================
-            // 1️⃣ BLOQUEAR TODOS LOS BOTONES DE FORMULARIO
+            // 1️⃣ PROTEGER FORMULARIOS (EXCLUIR LOGOUT)
             // =====================================================
             const forms = document.querySelectorAll('form:not(#logout-form)');
             
             forms.forEach(form => {
                 form.addEventListener('submit', function(e) {
-                    if (isProcessing) {
-                        e.preventDefault();
-                        alert('⏳ Espera a que termine la acción actual...');
-                        return false;
-                    }
-                    
-                    isProcessing = true;
-                    
-                    // Deshabilitar TODOS los botones de la página
-                    disableAllInteractiveElements();
-                    
                     const submitButton = this.querySelector('button[type="submit"]');
+                    
                     if (submitButton) {
-                        const originalText = submitButton.innerHTML;
+                        if (submitButton.disabled) {
+                            e.preventDefault();
+                            return false;
+                        }
+                        
                         if (!submitButton.hasAttribute('data-original-text')) {
-                            submitButton.setAttribute('data-original-text', originalText);
+                            submitButton.setAttribute('data-original-text', submitButton.innerHTML);
                         }
-                        submitButton.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Procesando...`;
+                        
+                        const originalText = submitButton.innerHTML;
+                        
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = `
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Procesando...
+                        `;
                         submitButton.style.opacity = '0.8';
-                    }
-                    
-                    // Timeout de seguridad (10 segundos)
-                    setTimeout(() => {
-                        if (isProcessing) {
-                            enableAllInteractiveElements();
-                            isProcessing = false;
-                            if (submitButton) {
-                                submitButton.innerHTML = submitButton.getAttribute('data-original-text');
+                        submitButton.style.cursor = 'not-allowed';
+                        submitButton.classList.add('btn-processing');
+                        
+                        setTimeout(() => {
+                            if (submitButton.disabled) {
+                                submitButton.disabled = false;
+                                submitButton.innerHTML = submitButton.getAttribute('data-original-text') || originalText;
                                 submitButton.style.opacity = '1';
+                                submitButton.style.cursor = 'pointer';
+                                submitButton.classList.remove('btn-processing');
                             }
-                        }
-                    }, 10000);
-                    
-                    return true;
+                        }, 10000);
+                    }
                 });
             });
             
             // =====================================================
-            // 2️⃣ BLOQUEAR TODOS LOS ENLACES PELIGROSOS
+            // 2️⃣ PROTEGER ENLACES PELIGROSOS
             // =====================================================
             const dangerousLinks = document.querySelectorAll('a[onclick*="confirm"], a.delete-link, .btn-danger, [data-confirm]');
             
             dangerousLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
-                    if (isProcessing) {
+                    if (this.classList.contains('disabled')) {
                         e.preventDefault();
-                        alert('⏳ Espera a que termine la acción actual...');
                         return false;
                     }
                     
-                    isProcessing = true;
-                    disableAllInteractiveElements();
+                    this.classList.add('disabled');
+                    this.style.opacity = '0.6';
+                    this.style.pointerEvents = 'none';
                     
                     setTimeout(() => {
-                        if (isProcessing) {
-                            enableAllInteractiveElements();
-                            isProcessing = false;
-                        }
-                    }, 3000);
-                    
-                    return true;
+                        this.classList.remove('disabled');
+                        this.style.opacity = '1';
+                        this.style.pointerEvents = 'auto';
+                    }, 2000);
                 });
             });
             
             // =====================================================
-            // 3️⃣ BLOQUEAR TODOS LOS BOTONES DE NAVEGACIÓN
+            // 3️⃣ PROTEGER ENLACES DE NAVEGACIÓN
             // =====================================================
             const navButtons = document.querySelectorAll('a.nav-link:not(.dropdown-toggle), .home-btn');
             
             navButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
-                    if (isProcessing) {
+                    if (this.classList.contains('nav-processing')) {
                         e.preventDefault();
-                        alert('⏳ Espera a que termine la acción actual...');
+                        e.stopPropagation();
                         return false;
                     }
                     
-                    isProcessing = true;
-                    disableAllInteractiveElements();
+                    this.classList.add('nav-processing');
+                    this.style.opacity = '0.6';
+                    this.style.cursor = 'wait';
+                    this.style.pointerEvents = 'none';
                     
                     setTimeout(() => {
-                        if (isProcessing) {
-                            enableAllInteractiveElements();
-                            isProcessing = false;
-                        }
+                        this.classList.remove('nav-processing');
+                        this.style.opacity = '1';
+                        this.style.cursor = 'pointer';
+                        this.style.pointerEvents = 'auto';
                     }, 3000);
-                    
-                    return true;
                 });
             });
             
             // =====================================================
-            // FUNCIONES PARA DES/HABILITAR ELEMENTOS
+            // 4️⃣ PROTEGER TODOS LOS BOTONES .btn Y ENLACES COMUNES
             // =====================================================
-            function disableAllInteractiveElements() {
-                // Deshabilitar todos los botones de formulario
-                document.querySelectorAll('button[type="submit"], button:not([type="button"]), input[type="submit"]').forEach(el => {
-                    el.disabled = true;
-                    el.style.opacity = '0.6';
-                    el.style.cursor = 'wait';
-                });
-                
-                // Deshabilitar todos los enlaces con clase .btn
-                document.querySelectorAll('a.btn, .home-btn, .nav-link').forEach(el => {
-                    el.style.pointerEvents = 'none';
-                    el.style.opacity = '0.6';
-                    el.style.cursor = 'wait';
-                });
-                
-                // Agregar clase global
-                document.body.style.cursor = 'wait';
-            }
+            const allActionButtons = document.querySelectorAll('.btn, a.btn, button:not([type="submit"]):not(.dropdown-toggle)');
             
-            function enableAllInteractiveElements() {
-                // Re-habilitar todos los botones de formulario
-                document.querySelectorAll('button[type="submit"], button:not([type="button"]), input[type="submit"]').forEach(el => {
-                    el.disabled = false;
-                    el.style.opacity = '1';
-                    el.style.cursor = 'pointer';
-                });
+            allActionButtons.forEach(button => {
+                if (button.classList.contains('home-btn') || 
+                    button.classList.contains('nav-processing') || 
+                    button.closest('.dropdown-menu')) {
+                    return;
+                }
                 
-                // Re-habilitar todos los enlaces
-                document.querySelectorAll('a.btn, .home-btn, .nav-link').forEach(el => {
-                    el.style.pointerEvents = 'auto';
-                    el.style.opacity = '1';
-                    el.style.cursor = 'pointer';
-                });
+                let isClicking = false;
                 
-                // Quitar clase global
-                document.body.style.cursor = 'default';
-            }
-            
-            // Exponer funciones globalmente por si se necesitan
-            window.enableAllButtons = enableAllInteractiveElements;
-            window.disableAllButtons = disableAllInteractiveElements;
+                button.addEventListener('click', function(e) {
+                    if (isClicking || this.classList.contains('action-processing')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
+                    
+                    isClicking = true;
+                    this.classList.add('action-processing');
+                    
+                    const originalText = this.innerHTML;
+                    const originalOpacity = this.style.opacity;
+                    
+                    this.style.opacity = '0.6';
+                    this.style.cursor = 'wait';
+                    this.style.pointerEvents = 'none';
+                    
+                    if (this.innerText && this.innerText.trim().length > 0 && !this.innerText.includes('...')) {
+                        this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> Cargando...';
+                    }
+                    
+                    setTimeout(() => {
+                        isClicking = false;
+                        this.classList.remove('action-processing');
+                        this.style.opacity = originalOpacity || '1';
+                        this.style.cursor = 'pointer';
+                        this.style.pointerEvents = 'auto';
+                        this.innerHTML = originalText;
+                    }, 3000);
+                });
+            });
         });
+
+        // =====================================================
+        // 🔥 FUNCIONES GLOBALES
+        // =====================================================
+        window.enableSubmitButtons = function(formId) {
+            const form = document.getElementById(formId);
+            if (form) {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = btn.getAttribute('data-original-text') || 'Enviar';
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    btn.classList.remove('btn-processing');
+                }
+            }
+        };
+
+        window.disableSubmitButton = function(formId, message = 'Procesando...') {
+            const form = document.getElementById(formId);
+            if (form) {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn) {
+                    if (!btn.hasAttribute('data-original-text')) {
+                        btn.setAttribute('data-original-text', btn.innerHTML);
+                    }
+                    btn.disabled = true;
+                    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> ${message}`;
+                    btn.style.opacity = '0.8';
+                    btn.style.cursor = 'not-allowed';
+                    btn.classList.add('btn-processing');
+                }
+            }
+        };
     </script>
 
     <style>
+        /* Estilos adicionales para botones en procesamiento */
+        .btn-processing {
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-processing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Estilo para enlaces deshabilitados */
+        .disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .nav-processing {
+            pointer-events: none !important;
+            opacity: 0.6 !important;
+            cursor: wait !important;
+        }
+        
+        .action-processing {
+            pointer-events: none !important;
+            opacity: 0.6 !important;
+            cursor: wait !important;
+        }
+        
         /* Spinner personalizado */
         .spinner-border-sm {
             width: 1rem;
             height: 1rem;
             border-width: 0.15em;
-        }
-        
-        /* Cursor de espera en toda la página */
-        body.waiting {
-            cursor: wait !important;
-        }
-        
-        /* Deshabilitar todos los elementos interactivos */
-        .global-disabled {
-            pointer-events: none !important;
-            opacity: 0.6 !important;
         }
     </style>
 
@@ -719,6 +811,7 @@
     </div>
 
     <style>
+        /* Estilos del aviso de cookies */
         .cookie-consent {
             position: fixed;
             bottom: 20px;
@@ -734,8 +827,14 @@
         }
         
         @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
         
         .cookie-content {
@@ -838,22 +937,37 @@
                 text-align: center;
                 padding: 20px;
             }
-            .cookie-icon { margin: 0 auto; }
-            .cookie-buttons { justify-content: center; }
+            
+            .cookie-icon {
+                margin: 0 auto;
+            }
+            
+            .cookie-buttons {
+                justify-content: center;
+            }
         }
     </style>
 
     <script>
+        // =====================================================
+        // 🔥 GESTIÓN DE COOKIES
+        // =====================================================
         document.addEventListener('DOMContentLoaded', function() {
             const cookieConsent = document.getElementById('cookieConsent');
             const acceptBtn = document.getElementById('acceptCookies');
             const declineBtn = document.getElementById('declineCookies');
             const cookieLink = document.querySelector('.cookie-link');
             
+            let isProcessingCookie = false;
+            let isLinkProcessing = false;
+            
             function checkCookieConsent() {
                 const cookiesAccepted = localStorage.getItem('cookies_accepted');
                 const cookiesDeclined = localStorage.getItem('cookies_declined');
-                if (cookiesAccepted === 'true' || cookiesDeclined === 'true') {
+                
+                if (cookiesAccepted === 'true') {
+                    cookieConsent.style.display = 'none';
+                } else if (cookiesDeclined === 'true') {
                     cookieConsent.style.display = 'none';
                 } else {
                     cookieConsent.style.display = 'block';
@@ -861,17 +975,80 @@
             }
             
             function acceptCookies() {
+                if (isProcessingCookie) return;
+                isProcessingCookie = true;
+                
+                if (acceptBtn) {
+                    acceptBtn.style.opacity = '0.6';
+                    acceptBtn.style.cursor = 'wait';
+                    acceptBtn.style.pointerEvents = 'none';
+                }
+                
                 localStorage.setItem('cookies_accepted', 'true');
                 localStorage.removeItem('cookies_declined');
                 cookieConsent.style.display = 'none';
                 showToast('✅ Has aceptado las cookies', 'success');
+                
+                setTimeout(() => {
+                    isProcessingCookie = false;
+                    if (acceptBtn) {
+                        acceptBtn.style.opacity = '1';
+                        acceptBtn.style.cursor = 'pointer';
+                        acceptBtn.style.pointerEvents = 'auto';
+                    }
+                }, 1000);
             }
             
             function declineCookies() {
+                if (isProcessingCookie) return;
+                isProcessingCookie = true;
+                
+                if (declineBtn) {
+                    declineBtn.style.opacity = '0.6';
+                    declineBtn.style.cursor = 'wait';
+                    declineBtn.style.pointerEvents = 'none';
+                }
+                
                 localStorage.setItem('cookies_declined', 'true');
                 localStorage.removeItem('cookies_accepted');
                 cookieConsent.style.display = 'none';
                 showToast('ℹ️ Solo se usarán cookies esenciales', 'info');
+                
+                setTimeout(() => {
+                    isProcessingCookie = false;
+                    if (declineBtn) {
+                        declineBtn.style.opacity = '1';
+                        declineBtn.style.cursor = 'pointer';
+                        declineBtn.style.pointerEvents = 'auto';
+                    }
+                }, 1000);
+            }
+            
+            function handleCookieLink(e) {
+                if (isLinkProcessing) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+                
+                isLinkProcessing = true;
+                
+                if (cookieLink) {
+                    cookieLink.style.opacity = '0.6';
+                    cookieLink.style.cursor = 'wait';
+                    cookieLink.style.pointerEvents = 'none';
+                }
+                
+                setTimeout(() => {
+                    isLinkProcessing = false;
+                    if (cookieLink) {
+                        cookieLink.style.opacity = '1';
+                        cookieLink.style.cursor = 'pointer';
+                        cookieLink.style.pointerEvents = 'auto';
+                    }
+                }, 2000);
+                
+                return true;
             }
             
             function showToast(message, type = 'info') {
@@ -892,6 +1069,7 @@
                 `;
                 toast.innerHTML = `<i class="bi bi-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i> ${message}`;
                 document.body.appendChild(toast);
+                
                 setTimeout(() => {
                     toast.style.opacity = '0';
                     toast.style.transition = 'opacity 0.3s';
@@ -900,12 +1078,23 @@
             }
             
             const style = document.createElement('style');
-            style.textContent = `@keyframes slideInRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+            style.textContent = `
+                @keyframes slideInRight {
+                    from {
+                        transform: translateX(100px);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
             document.head.appendChild(style);
             
             if (acceptBtn) acceptBtn.addEventListener('click', acceptCookies);
             if (declineBtn) declineBtn.addEventListener('click', declineCookies);
-            if (cookieLink) cookieLink.addEventListener('click', function(e) { return true; });
+            if (cookieLink) cookieLink.addEventListener('click', handleCookieLink);
             
             checkCookieConsent();
         });

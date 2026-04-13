@@ -69,18 +69,52 @@
                                 </thead>
                                 <tbody style="background: transparent !important;">
                                     @foreach($order->items as $item)
+                                    @php
+                                        // Obtener el juego para mostrar precio con descuento si aplica
+                                        $game = $item->game;
+                                        $displayPrice = $item->unit_price;
+                                        $originalPrice = null;
+                                        $hasDiscount = false;
+                                        $discountPercent = 0;
+                                        
+                                        if($game && $game->has_discount && $game->discount_percent > 0) {
+                                            $originalPrice = $game->price;
+                                            $hasDiscount = true;
+                                            $discountPercent = $game->discount_percent;
+                                        }
+                                    @endphp
                                     <tr style="border-bottom: 1px solid rgba(34, 197, 94, 0.05); background: transparent !important;">
                                         <td style="padding: 15px 0; background: transparent !important;">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div style="width: 50px; height: 50px; border-radius: 8px; overflow: hidden; background: #1e293b;">
-                                                        <img src="{{ asset('storage/' . $item->game->image_path) }}" 
-                                                             alt="{{ $item->game->name }}"
-                                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                                        @if($game && $game->image_path)
+                                                            <img src="{{ asset('storage/' . $game->image_path) }}" 
+                                                                 alt="{{ $game->name }}"
+                                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                                        @else
+                                                            <div class="d-flex align-items-center justify-content-center h-100">
+                                                                <i class="bi bi-controller" style="color: #22d3ee;"></i>
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <h6 style="color: #ffffff !important; margin-bottom: 0;">{{ $item->game->name }}</h6>
+                                                    <h6 style="color: #ffffff !important; margin-bottom: 0;">
+                                                        {{ $game ? $game->name : 'Juego no disponible' }}
+                                                    </h6>
+                                                    @if($hasDiscount)
+                                                        <small style="color: #94a3b8; font-size: 0.7rem; text-decoration: line-through;">
+                                                            ${{ number_format($originalPrice, 2) }}
+                                                        </small>
+                                                        <span class="badge ms-1" style="
+                                                            background: rgba(239, 68, 68, 0.2);
+                                                            color: #fecaca;
+                                                            font-size: 0.65rem;
+                                                        ">
+                                                            -{{ $discountPercent }}%
+                                                        </span>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
@@ -96,9 +130,17 @@
                                             </span>
                                         </td>
                                         <td style="text-align: right; padding: 15px 0; background: transparent !important;">
-                                            <span style="color: #22d3ee !important; font-weight: 600;">
-                                                ${{ number_format($item->subtotal, 2) }}
-                                            </span>
+                                            <div class="d-flex flex-column align-items-end">
+                                                @if($hasDiscount)
+                                                    <span style="color: #22d3ee !important; font-weight: 600;">
+                                                        ${{ number_format($displayPrice, 2) }}
+                                                    </span>
+                                                @else
+                                                    <span style="color: #22d3ee !important; font-weight: 600;">
+                                                        ${{ number_format($displayPrice, 2) }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                     @endforeach

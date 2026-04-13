@@ -43,6 +43,7 @@
         @php 
             $total = 0;
             $cart = session('cart');
+            $hasUnavailable = false;
         @endphp
 
         <div class="row">
@@ -71,17 +72,43 @@
                                         background: rgba(34, 211, 238, 0.05);
                                         border-bottom: 2px solid rgba(99, 102, 241, 0.3);
                                     ">
-                                        <th style="color: #ffffff !important; font-weight: 700; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">JUEGO</th>
-                                        <th style="color: #ffffff !important; font-weight: 700; text-align: center; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">PRECIO</th>
-                                        <th style="color: #ffffff !important; font-weight: 700; text-align: center; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">CANTIDAD</th>
-                                        <th style="color: #ffffff !important; font-weight: 700; text-align: right; padding: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">SUBTOTAL</th>
+                                        <th style="color: #ffffff !important; font-weight: 700; padding: 20px;">JUEGO</th>
+                                        <th style="color: #ffffff !important; font-weight: 700; text-align: center; padding: 20px;">PRECIO</th>
+                                        <th style="color: #ffffff !important; font-weight: 700; text-align: center; padding: 20px;">CANTIDAD</th>
+                                        <th style="color: #ffffff !important; font-weight: 700; text-align: right; padding: 20px;">SUBTOTAL</th>
                                     </tr>
                                 </thead>
                                 <tbody style="background: transparent !important;">
                                     @foreach($cart as $id => $details)
                                         @php 
-                                            $subtotal = $details['price'] * $details['quantity']; 
-                                            $total += $subtotal; 
+                                            // Verificar si el juego existe en la base de datos
+                                            $game = App\Models\Game::withTrashed()->find($id);
+                                            $isGameDeleted = !$game || $game->trashed();
+                                            $isGameOutOfStock = $game && $game->status == 'out_of_stock';
+                                            $isGameDiscontinued = $game && $game->status == 'discontinued';
+                                            $isUnavailable = $isGameDeleted || $isGameOutOfStock || $isGameDiscontinued;
+                                            
+                                            if($isUnavailable) {
+                                                $hasUnavailable = true;
+                                            }
+                                            
+                                            // Calcular precio con descuento si el juego existe
+                                            $finalPrice = $details['price'];
+                                            $originalPrice = $details['price'];
+                                            $hasDiscount = false;
+                                            $discountPercent = 0;
+                                            
+                                            if($game && !$isGameDeleted && $game->has_discount) {
+                                                $finalPrice = $game->final_price;
+                                                $originalPrice = $game->price;
+                                                $hasDiscount = true;
+                                                $discountPercent = $game->discount_percent;
+                                            }
+                                            
+                                            $subtotal = $finalPrice * $details['quantity']; 
+                                            if(!$isUnavailable) {
+                                                $total += $subtotal;
+                                            }
                                         @endphp
                                         <tr style="border-bottom: 1px solid rgba(99, 102, 241, 0.1); background: transparent !important;">
                                             <td style="padding: 20px; background: transparent !important;">
@@ -93,6 +120,7 @@
                                                             border-radius: 12px; 
                                                             overflow: hidden;
                                                             border: 2px solid rgba(99, 102, 241, 0.2);
+                                                            {{ $isUnavailable ? 'opacity: 0.5;' : '' }}
                                                         ">
                                                             <img src="{{ asset('storage/' . $details['image']) }}" 
                                                                  class="w-100 h-100 object-fit-cover"
@@ -102,67 +130,131 @@
                                                     <div class="flex-grow-1">
                                                         <h6 style="color: #ffffff !important; margin-bottom: 5px; font-weight: 700; font-size: 1rem;">
                                                             {{ $details['name'] }}
+                                                            @if($isGameDeleted)
+                                                                <span class="badge ms-2" style="background: rgba(239, 68, 68, 0.2); color: #fecaca; border: 1px solid rgba(239, 68, 68, 0.3);">
+                                                                    <i class="bi bi-trash me-1"></i> ELIMINADO
+                                                                </span>
+                                                            @elseif($isGameOutOfStock)
+                                                                <span class="badge ms-2" style="background: rgba(239, 68, 68, 0.2); color: #fecaca; border: 1px solid rgba(239, 68, 68, 0.3);">
+                                                                    <i class="bi bi-exclamation-triangle me-1"></i> AGOTADO
+                                                                </span>
+                                                            @elseif($isGameDiscontinued)
+                                                                <span class="badge ms-2" style="background: rgba(100, 116, 139, 0.2); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.3);">
+                                                                    <i class="bi bi-stop-circle me-1"></i> DESCONTINUADO
+                                                                </span>
+                                                            @endif
                                                         </h6>
                                                         <div class="mt-2">
-                                                            <form action="{{ route('cart.remove', $id) }}" method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm" style="
-                                                                    background: rgba(239, 68, 68, 0.2);
-                                                                    border: 1px solid rgba(239, 68, 68, 0.4);
-                                                                    color: #fecaca;
-                                                                    padding: 4px 12px;
-                                                                    border-radius: 8px;
-                                                                    font-size: 0.8rem;
-                                                                    transition: all 0.3s ease;
-                                                                ">
-                                                                    <i class="bi bi-trash me-1"></i> Eliminar
-                                                                </button>
-                                                            </form>
-                                                            
-                                                            <form action="{{ route('cart.update', $id) }}" method="POST" class="d-inline ms-2">
-                                                                @csrf
-                                                                @method('PUT')
-                                                                <div class="input-group input-group-sm" style="width: 120px;">
-                                                                    <input type="number" 
-                                                                           name="quantity" 
-                                                                           value="{{ $details['quantity'] }}" 
-                                                                           min="1" 
-                                                                           max="10"
-                                                                           class="form-control" 
-                                                                           style="
-                                                                                background: rgba(30, 41, 59, 0.8);
-                                                                                border-color: rgba(99, 102, 241, 0.3);
-                                                                                color: #ffffff !important;
-                                                                                text-align: center;
-                                                                                font-weight: 600;
-                                                                            ">
-                                                                    <button type="submit" class="btn" style="
-                                                                        background: rgba(34, 211, 238, 0.2);
-                                                                        border: 1px solid rgba(34, 211, 238, 0.4);
-                                                                        color: #67e8f9;
-                                                                        font-weight: 600;
+                                                            @if(!$isUnavailable)
+                                                                <form action="{{ route('cart.remove', $id) }}" method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm" style="
+                                                                        background: rgba(239, 68, 68, 0.2);
+                                                                        border: 1px solid rgba(239, 68, 68, 0.4);
+                                                                        color: #fecaca;
+                                                                        padding: 4px 12px;
+                                                                        border-radius: 8px;
+                                                                        font-size: 0.8rem;
+                                                                        transition: all 0.3s ease;
                                                                     ">
-                                                                        <i class="bi bi-arrow-clockwise"></i>
+                                                                        <i class="bi bi-trash me-1"></i> Eliminar
                                                                     </button>
-                                                                </div>
-                                                            </form>
+                                                                </form>
+                                                                
+                                                                <form action="{{ route('cart.update', $id) }}" method="POST" class="d-inline ms-2">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <div class="input-group input-group-sm" style="width: 120px;">
+                                                                        <input type="number" 
+                                                                               name="quantity" 
+                                                                               value="{{ $details['quantity'] }}" 
+                                                                               min="1" 
+                                                                               max="10"
+                                                                               class="form-control" 
+                                                                               style="
+                                                                                    background: rgba(30, 41, 59, 0.8);
+                                                                                    border-color: rgba(99, 102, 241, 0.3);
+                                                                                    color: #ffffff !important;
+                                                                                    text-align: center;
+                                                                                    font-weight: 600;
+                                                                                ">
+                                                                        <button type="submit" class="btn" style="
+                                                                            background: rgba(34, 211, 238, 0.2);
+                                                                            border: 1px solid rgba(34, 211, 238, 0.4);
+                                                                            color: #67e8f9;
+                                                                            font-weight: 600;
+                                                                        ">
+                                                                            <i class="bi bi-arrow-clockwise"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            @else
+                                                                <form action="{{ route('cart.remove', $id) }}" method="POST" class="d-inline">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm" style="
+                                                                        background: rgba(239, 68, 68, 0.3);
+                                                                        border: 1px solid rgba(239, 68, 68, 0.5);
+                                                                        color: #fecaca;
+                                                                        padding: 4px 12px;
+                                                                        border-radius: 8px;
+                                                                        font-size: 0.8rem;
+                                                                        transition: all 0.3s ease;
+                                                                    ">
+                                                                        <i class="bi bi-trash me-1"></i> Eliminar del carrito
+                                                                    </button>
+                                                                </form>
+                                                                <span class="ms-2 text-muted small" style="color: #fca5a5 !important;">
+                                                                    <i class="bi bi-info-circle"></i> No disponible para compra
+                                                                </span>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
                                               </td>
                                             <td style="text-align: center; padding: 20px; vertical-align: middle; background: transparent !important;">
-                                                <span style="
-                                                    background: linear-gradient(45deg, #22d3ee, #6366f1);
-                                                    -webkit-background-clip: text;
-                                                    background-clip: text;
-                                                    color: transparent;
-                                                    font-weight: 800;
-                                                    font-size: 1rem;
-                                                ">
-                                                    ${{ number_format($details['price'], 2) }}
-                                                </span>
-                                              </td>
+                                                @if($hasDiscount && !$isUnavailable)
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <span style="
+                                                            text-decoration: line-through;
+                                                            color: #94a3b8;
+                                                            font-size: 0.8rem;
+                                                        ">
+                                                            ${{ number_format($originalPrice, 2) }}
+                                                        </span>
+                                                        <span style="
+                                                            background: linear-gradient(45deg, #22d3ee, #6366f1);
+                                                            -webkit-background-clip: text;
+                                                            background-clip: text;
+                                                            color: transparent;
+                                                            font-weight: 800;
+                                                            font-size: 1rem;
+                                                        ">
+                                                            ${{ number_format($finalPrice, 2) }}
+                                                        </span>
+                                                        <span class="badge mt-1" style="
+                                                            background: rgba(239, 68, 68, 0.2);
+                                                            color: #fecaca;
+                                                            font-size: 0.7rem;
+                                                        ">
+                                                            -{{ $discountPercent }}%
+                                                        </span>
+                                                    </div>
+                                                @else
+                                                    <span style="
+                                                        background: linear-gradient(45deg, #22d3ee, #6366f1);
+                                                        -webkit-background-clip: text;
+                                                        background-clip: text;
+                                                        color: transparent;
+                                                        font-weight: 800;
+                                                        font-size: 1rem;
+                                                        {{ $isUnavailable ? 'opacity: 0.5;' : '' }}
+                                                    ">
+                                                        ${{ number_format($finalPrice, 2) }}
+                                                    </span>
+                                                @endif
+                                            </td>
                                             <td style="text-align: center; padding: 20px; vertical-align: middle; background: transparent !important;">
                                                 <span class="badge" style="
                                                     background: rgba(139, 92, 246, 0.2);
@@ -172,20 +264,31 @@
                                                     padding: 8px 16px;
                                                     border-radius: 10px;
                                                     border: 1px solid rgba(139, 92, 246, 0.3);
+                                                    {{ $isUnavailable ? 'opacity: 0.5;' : '' }}
                                                 ">
                                                     {{ $details['quantity'] }}
                                                 </span>
-                                              </td>
+                                            </td>
                                             <td style="text-align: right; padding: 20px; vertical-align: middle; background: transparent !important;">
-                                                <span style="
-                                                    color: #22d3ee;
-                                                    font-weight: 900;
-                                                    font-size: 1.1rem;
-                                                    text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
-                                                ">
-                                                    ${{ number_format($subtotal, 2) }}
-                                                </span>
-                                              </td>
+                                                @if(!$isUnavailable)
+                                                    <span style="
+                                                        color: #22d3ee;
+                                                        font-weight: 900;
+                                                        font-size: 1.1rem;
+                                                        text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+                                                    ">
+                                                        ${{ number_format($subtotal, 2) }}
+                                                    </span>
+                                                @else
+                                                    <span style="
+                                                        color: #64748b;
+                                                        font-weight: 900;
+                                                        font-size: 1.1rem;
+                                                    ">
+                                                        $0.00
+                                                    </span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -213,6 +316,21 @@
                         </h5>
                     </div>
                     <div class="card-body p-4">
+                        @if($hasUnavailable)
+                            <div class="alert mb-3" style="
+                                background: rgba(239, 68, 68, 0.1);
+                                border: 1px solid rgba(239, 68, 68, 0.3);
+                                border-radius: 12px;
+                                color: #fecaca;
+                                padding: 12px;
+                                font-size: 0.85rem;
+                            ">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <strong>¡Atención!</strong> Algunos productos en tu carrito ya no están disponibles.
+                                Por favor, elimínalos para continuar.
+                            </div>
+                        @endif
+
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span style="color: #e2e8f0; font-weight: 500;">Subtotal</span>
@@ -255,22 +373,37 @@
                                 Pago 100% seguro con encriptación SSL
                             </div>
                             
-                            <a href="{{ route('checkout') }}" class="btn checkout-btn w-100 gaming-font" style="
-                                background: linear-gradient(45deg, #22d3ee, #6366f1, #a855f7);
-                                background-size: 200% 200%;
-                                border: none;
-                                border-radius: 12px;
-                                padding: 16px;
-                                color: #0f172a;
-                                font-weight: 900;
-                                letter-spacing: 1px;
-                                transition: all 0.3s ease;
-                                position: relative;
-                                overflow: hidden;
-                                animation: gradientShift 3s ease infinite;
-                            ">
-                                <i class="bi bi-credit-card me-2"></i> PROCEDER AL PAGO
-                            </a>
+                            @if($total > 0 && !$hasUnavailable)
+                                <a href="{{ route('checkout') }}" class="btn checkout-btn w-100 gaming-font" style="
+                                    background: linear-gradient(45deg, #22d3ee, #6366f1, #a855f7);
+                                    background-size: 200% 200%;
+                                    border: none;
+                                    border-radius: 12px;
+                                    padding: 16px;
+                                    color: #0f172a;
+                                    font-weight: 900;
+                                    letter-spacing: 1px;
+                                    transition: all 0.3s ease;
+                                    position: relative;
+                                    overflow: hidden;
+                                    animation: gradientShift 3s ease infinite;
+                                ">
+                                    <i class="bi bi-credit-card me-2"></i> PROCEDER AL PAGO
+                                </a>
+                            @else
+                                <button class="btn w-100 gaming-font" disabled style="
+                                    background: rgba(100, 116, 139, 0.3);
+                                    border: none;
+                                    border-radius: 12px;
+                                    padding: 16px;
+                                    color: #94a3b8;
+                                    font-weight: 900;
+                                    letter-spacing: 1px;
+                                    cursor: not-allowed;
+                                ">
+                                    <i class="bi bi-x-circle me-2"></i> NO DISPONIBLE
+                                </button>
+                            @endif
                             
                             <p class="text-center mt-3 mb-0" style="color: #94a3b8; font-size: 0.8rem;">
                                 <i class="bi bi-lock me-1"></i>

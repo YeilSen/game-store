@@ -155,7 +155,6 @@
                                                    class="form-control" 
                                                    id="card_number" 
                                                    name="card_number"
-                                                   required
                                                    placeholder="1234 5678 9012 3456"
                                                    maxlength="19"
                                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 32"
@@ -165,7 +164,7 @@
                                                         color: #ffffff;
                                                         letter-spacing: 1px;
                                                    ">
-                                            <label for="card_number" style="color: #94a3b8;">Número de Tarjeta * (16 dígitos)</label>
+                                            <label for="card_number" style="color: #94a3b8;">Número de Tarjeta (16 dígitos)</label>
                                         </div>
                                         <div class="card-icons mt-2">
                                             <i class="bi bi-cc-visa me-2" style="color: #6366f1; font-size: 1.5rem;"></i>
@@ -179,7 +178,6 @@
                                                 <select class="form-select" 
                                                         id="card_exp_month" 
                                                         name="card_exp_month"
-                                                        required
                                                         style="
                                                             background: rgba(30, 41, 59, 0.8);
                                                             border: 1px solid rgba(99, 102, 241, 0.3);
@@ -192,7 +190,7 @@
                                                         </option>
                                                     @endfor
                                                 </select>
-                                                <label for="card_exp_month" style="color: #94a3b8;">Mes *</label>
+                                                <label for="card_exp_month" style="color: #94a3b8;">Mes</label>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
@@ -200,7 +198,6 @@
                                                 <select class="form-select" 
                                                         id="card_exp_year" 
                                                         name="card_exp_year"
-                                                        required
                                                         style="
                                                             background: rgba(30, 41, 59, 0.8);
                                                             border: 1px solid rgba(99, 102, 241, 0.3);
@@ -213,7 +210,7 @@
                                                         </option>
                                                     @endfor
                                                 </select>
-                                                <label for="card_exp_year" style="color: #94a3b8;">Año *</label>
+                                                <label for="card_exp_year" style="color: #94a3b8;">Año</label>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
@@ -222,7 +219,6 @@
                                                        class="form-control" 
                                                        id="card_cvv" 
                                                        name="card_cvv"
-                                                       required
                                                        placeholder="123"
                                                        maxlength="4"
                                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
@@ -231,7 +227,7 @@
                                                             border: 1px solid rgba(99, 102, 241, 0.3);
                                                             color: #ffffff;
                                                        ">
-                                                <label for="card_cvv" style="color: #94a3b8;">CVV * (3 o 4 dígitos)</label>
+                                                <label for="card_cvv" style="color: #94a3b8;">CVV (3 o 4 dígitos)</label>
                                             </div>
                                         </div>
                                     </div>
@@ -271,7 +267,7 @@
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="bank_name" style="color: #94a3b8;">Nombre del Banco * (Solo letras)</label>
+                                            <label for="bank_name" style="color: #94a3b8;">Nombre del Banco</label>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -288,7 +284,7 @@
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="account_number" style="color: #94a3b8;">Número de Cuenta * (Solo números)</label>
+                                            <label for="account_number" style="color: #94a3b8;">Número de Cuenta</label>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -303,7 +299,7 @@
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="transaction_reference" style="color: #94a3b8;">Referencia de Transferencia *</label>
+                                            <label for="transaction_reference" style="color: #94a3b8;">Referencia de Transferencia</label>
                                         </div>
                                     </div>
                                 </div>
@@ -352,7 +348,7 @@
                     </div>
                 </div>
 
-                {{-- Resumen del pedido --}}
+                {{-- Resumen del pedido ACTUALIZADO con descuentos --}}
                 <div class="col-lg-4">
                     <div class="card mb-4" style="
                         background: rgba(10, 15, 28, 0.95);
@@ -371,13 +367,35 @@
                         </div>
                         <div class="card-body p-4">
                             <div class="mb-3">
-                                @foreach($cart as $id => $item)
+                                @php
+                                    $subtotalActualizado = 0;
+                                @endphp
+                                @foreach($updatedCart as $id => $item)
+                                    @php
+                                        $itemTotal = $item['price'] * $item['quantity'];
+                                        $subtotalActualizado += $itemTotal;
+                                    @endphp
                                     <div class="d-flex justify-content-between mb-2">
-                                        <span style="color: #e2e8f0; font-size: 0.9rem;">
-                                            {{ $item['name'] }} x{{ $item['quantity'] }}
-                                        </span>
+                                        <div>
+                                            <span style="color: #e2e8f0; font-size: 0.9rem;">
+                                                {{ $item['name'] }} x{{ $item['quantity'] }}
+                                            </span>
+                                            @if(isset($item['has_discount']) && $item['has_discount'])
+                                                <br>
+                                                <small style="color: #94a3b8; font-size: 0.7rem; text-decoration: line-through;">
+                                                    ${{ number_format($item['original_price'], 2) }} c/u
+                                                </small>
+                                                <span class="badge ms-1" style="
+                                                    background: rgba(239, 68, 68, 0.2);
+                                                    color: #fecaca;
+                                                    font-size: 0.65rem;
+                                                ">
+                                                    -{{ $item['discount_percent'] }}%
+                                                </span>
+                                            @endif
+                                        </div>
                                         <span style="color: #22d3ee; font-weight: 600;">
-                                            ${{ number_format($item['price'] * $item['quantity'], 2) }}
+                                            ${{ number_format($itemTotal, 2) }}
                                         </span>
                                     </div>
                                 @endforeach
@@ -388,7 +406,7 @@
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span style="color: #e2e8f0; font-weight: 500;">Subtotal</span>
-                                    <span style="color: #ffffff; font-weight: 600;">${{ number_format($total, 2) }}</span>
+                                    <span style="color: #ffffff; font-weight: 600;">${{ number_format($subtotalActualizado, 2) }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span style="color: #e2e8f0; font-weight: 500;">Envío</span>
@@ -412,7 +430,7 @@
                                     font-weight: 900;
                                     font-size: 1.3rem;
                                 ">
-                                    ${{ number_format($total, 2) }}
+                                    ${{ number_format($subtotalActualizado, 2) }}
                                 </span>
                             </div>
 
@@ -507,7 +525,7 @@
             });
         }
         
-        // Formatear número de tarjeta (agregar espacios cada 4 dígitos)
+        // Formatear número de tarjeta
         const cardNumberInput = document.getElementById('card_number');
         if (cardNumberInput) {
             cardNumberInput.addEventListener('input', function(e) {
@@ -519,73 +537,24 @@
         }
         
         // =====================================================
-        // 🔥 ENVÍO DEL FORMULARIO - SIN BLOQUEAR
+        // 🔥 ENVÍO DEL FORMULARIO - CORREGIDO
         // =====================================================
-        if (form) {
+        if (form && payButton) {
+            let isSubmitting = false;
+            
             form.addEventListener('submit', function(e) {
+                // Evitar múltiples envíos
+                if (isSubmitting) {
+                    e.preventDefault();
+                    return false;
+                }
+                
                 const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
                 
                 if (!paymentMethod) {
                     e.preventDefault();
                     alert('❌ Selecciona un método de pago');
                     return false;
-                }
-                
-                // Validaciones para tarjeta de crédito
-                if (paymentMethod.value === 'credit_card') {
-                    const cardNumber = document.getElementById('card_number')?.value.replace(/\s/g, '') || '';
-                    const expMonth = document.getElementById('card_exp_month')?.value || '';
-                    const expYear = document.getElementById('card_exp_year')?.value || '';
-                    const cvv = document.getElementById('card_cvv')?.value || '';
-                    
-                    if (cardNumber.length !== 16) {
-                        e.preventDefault();
-                        alert('❌ El número de tarjeta debe tener 16 dígitos');
-                        return false;
-                    }
-                    
-                    if (expMonth === '') {
-                        e.preventDefault();
-                        alert('❌ Selecciona el mes de expiración');
-                        return false;
-                    }
-                    
-                    if (expYear === '') {
-                        e.preventDefault();
-                        alert('❌ Selecciona el año de expiración');
-                        return false;
-                    }
-                    
-                    if (cvv.length < 3 || cvv.length > 4) {
-                        e.preventDefault();
-                        alert('❌ El CVV debe tener 3 o 4 dígitos');
-                        return false;
-                    }
-                }
-                
-                // Validaciones para transferencia bancaria
-                if (paymentMethod.value === 'bank_transfer') {
-                    const bankName = document.getElementById('bank_name')?.value.trim() || '';
-                    const accountNumber = document.getElementById('account_number')?.value.trim() || '';
-                    const reference = document.getElementById('transaction_reference')?.value.trim() || '';
-                    
-                    if (bankName === '') {
-                        e.preventDefault();
-                        alert('❌ Ingresa el nombre del banco');
-                        return false;
-                    }
-                    
-                    if (accountNumber === '') {
-                        e.preventDefault();
-                        alert('❌ Ingresa el número de cuenta');
-                        return false;
-                    }
-                    
-                    if (reference === '') {
-                        e.preventDefault();
-                        alert('❌ Ingresa la referencia de transferencia');
-                        return false;
-                    }
                 }
                 
                 // Validar nombre
@@ -604,13 +573,14 @@
                     return false;
                 }
                 
-                // Mostrar loading (pero NO deshabilitar el envío)
-                if (payButton) {
-                    payButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> PROCESANDO PAGO...';
-                    payButton.style.opacity = '0.8';
-                }
+                // Marcar como enviando
+                isSubmitting = true;
                 
-                // Permitir envío del formulario
+                // Cambiar texto del botón (NO deshabilitar)
+                payButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> PROCESANDO PAGO...';
+                payButton.style.opacity = '0.8';
+                
+                // El formulario se envía normalmente
                 return true;
             });
         }

@@ -158,6 +158,14 @@
                                             onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario? Esta acción es irreversible.');">
                                                 <i class="bi bi-trash me-1"></i> Eliminar
                                             </button>
+                                            <a href="{{ route('admin.users.orders', $user->id) }}" class="btn btn-sm" style="
+                                                background: rgba(34, 211, 238, 0.1);
+                                                border: 1px solid rgba(34, 211, 238, 0.3);
+                                                color: #22d3ee;
+                                            ">
+                                                <i class="bi bi-clock-history"></i> Ver pedidos
+                                            </a>
+
                                         </form>
                                      </td>
                                  </tr>

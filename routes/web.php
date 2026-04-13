@@ -45,6 +45,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Historial de compras del usuario
+    Route::get('/profile/orders', [App\Http\Controllers\ProfileController::class, 'orders'])->name('profile.orders');
 });
 
 /*
@@ -56,38 +59,37 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Juegos
     Route::get('/games', [AdminController::class, 'listGames'])->name('games.index');
-
     Route::get('/games/create', [AdminController::class, 'createGame'])->name('games.create');
-
     Route::post('/games', [AdminController::class, 'storeGame'])->name('games.store');
-
     Route::get('/games/{id}/edit', [AdminController::class, 'editGame'])->name('games.edit');
-
     Route::put('/games/{id}', [AdminController::class, 'updateGame'])->name('games.update');
-
     Route::delete('/games/{id}', [AdminController::class, 'destroy'])->name('games.delete');
-
 
     // Usuarios
     Route::get('/users', [AdminController::class, 'index'])->name('users.index');
-
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('users.delete');
-
 
     // Logs
     Route::get('/logs', [AdminController::class, 'viewLoginLogs'])->name('logs.index');
 
-
     // Baneos
     Route::get('/bans', [BanController::class, 'index'])->name('bans.index');
-
     Route::post('/bans/unban', [BanController::class, 'unban'])->name('bans.unban');
 
+    // 🔥 PEDIDOS (CORREGIDO - SIN DUPLICADOS)
+    Route::get('/orders', [AdminController::class, 'allOrders'])->name('orders.index');
+    Route::get('/users/{id}/orders', [AdminController::class, 'userOrders'])->name('users.orders');
 });
 
+/*
+|--------------------------------------------------------------------------
+| RUTA DE POLÍTICA DE COOKIES
+|--------------------------------------------------------------------------
+*/
 Route::get('/cookies-policy', function () {
     return view('cookies-policy');
 })->name('cookies-policy');
+
 /*
 |--------------------------------------------------------------------------
 | RUTAS DE AUTENTICACIÓN
