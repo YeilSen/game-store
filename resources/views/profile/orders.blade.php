@@ -162,79 +162,95 @@
                                             </td>
                                         </tr>
                                         
-                                        {{-- Fila de detalle colapsable con mejor organización --}}
+                                        {{-- Fila de detalle colapsable MEJOR ORGANIZADO --}}
                                         <tr class="order-detail-row" id="orderDetail{{ $order->id }}" style="display: none;">
-                                            <td colspan="5" style="padding: 0; background: rgba(15, 23, 42, 0.5);">
-                                                <div class="p-4">
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-6">
-                                                            <p class="mb-1" style="color: #94a3b8;">NÚMERO DE ORDEN</p>
-                                                            <p class="fw-bold" style="color: #22d3ee;">{{ $order->order_number }}</p>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <p class="mb-1" style="color: #94a3b8;">FECHA COMPLETA</p>
-                                                            <p style="color: #e2e8f0;">{{ $order->created_at->format('d/m/Y H:i:s') }}</p>
+                                            <td colspan="5" style="padding: 20px; background: rgba(15, 23, 42, 0.8);">
+                                                
+                                                {{-- ===================================================== --}}
+                                                {{-- 📋 INFORMACIÓN DE LA ORDEN --}}
+                                                {{-- ===================================================== --}}
+                                                <div class="row mb-4">
+                                                    <div class="col-md-3">
+                                                        <div class="info-box" style="background: rgba(34, 211, 238, 0.05); padding: 12px; border-radius: 10px; border-left: 3px solid #22d3ee;">
+                                                            <small style="color: #94a3b8;">NÚMERO DE ORDEN</small>
+                                                            <p class="mb-0 fw-bold" style="color: #22d3ee;">{{ $order->order_number }}</p>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-3">
+                                                        <div class="info-box" style="background: rgba(34, 211, 238, 0.05); padding: 12px; border-radius: 10px; border-left: 3px solid #a855f7;">
+                                                            <small style="color: #94a3b8;">FECHA</small>
+                                                            <p class="mb-0" style="color: #e2e8f0;">{{ $order->created_at->format('d/m/Y H:i') }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="info-box" style="background: rgba(34, 211, 238, 0.05); padding: 12px; border-radius: 10px; border-left: 3px solid #22c55e;">
+                                                            <small style="color: #94a3b8;">TOTAL PAGADO</small>
+                                                            <p class="mb-0 fw-bold" style="color: #22c55e;">${{ number_format($order->total_amount, 2) }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="info-box" style="background: rgba(34, 211, 238, 0.05); padding: 12px; border-radius: 10px; border-left: 3px solid #fbbf24;">
+                                                            <small style="color: #94a3b8;">ESTADO</small>
+                                                            <p class="mb-0">
+                                                                @if($order->payment_status == 'paid')
+                                                                    <span style="color: #86efac;">✅ Pagado</span>
+                                                                @else
+                                                                    <span style="color: #fcd34d;">⏳ Pendiente</span>
+                                                                @endif
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                                    <h6 style="color: #a855f7; margin-bottom: 15px;">
+                                                {{-- ===================================================== --}}
+                                                {{-- 🎮 JUEGOS COMPRADOS --}}
+                                                {{-- ===================================================== --}}
+                                                <div class="mb-4">
+                                                    <h6 style="color: #22d3ee; margin-bottom: 15px;">
                                                         <i class="bi bi-controller me-2"></i> JUEGOS COMPRADOS
                                                     </h6>
-                                                    <div class="table-responsive mb-4">
-                                                        <table class="table" style="background: transparent;">
+                                                    <div class="table-responsive">
+                                                        <table class="table" style="background: rgba(0,0,0,0.3); border-radius: 12px; overflow: hidden;">
                                                             <thead>
-                                                                <tr style="border-bottom: 1px solid rgba(99, 102, 241, 0.2); background: rgba(34, 211, 238, 0.05);">
-                                                                    <th style="color: #cbd5e1; padding: 12px;">JUEGO</th>
-                                                                    <th style="color: #cbd5e1; text-align: center; padding: 12px;">CANTIDAD</th>
-                                                                    <th style="color: #cbd5e1; text-align: right; padding: 12px;">PRECIO UNITARIO</th>
-                                                                    <th style="color: #cbd5e1; text-align: right; padding: 12px;">SUBTOTAL</th>
+                                                                <tr style="background: rgba(34, 211, 238, 0.1);">
+                                                                    <th style="color: #e2e8f0; padding: 12px;">JUEGO</th>
+                                                                    <th style="color: #e2e8f0; text-align: center; padding: 12px;">CANTIDAD</th>
+                                                                    <th style="color: #e2e8f0; text-align: right; padding: 12px;">PRECIO UNITARIO</th>
+                                                                    <th style="color: #e2e8f0; text-align: right; padding: 12px;">SUBTOTAL</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 @foreach($order->items as $item)
                                                                 @php
                                                                     $game = $item->game;
-                                                                    $hasDiscount = false;
-                                                                    $originalPrice = null;
-                                                                    $discountPercent = 0;
-                                                                    
-                                                                    if($game && $game->has_discount && $game->discount_percent > 0) {
-                                                                        $hasDiscount = true;
-                                                                        $originalPrice = $game->price;
-                                                                        $discountPercent = $game->discount_percent;
-                                                                    }
-                                                                    
+                                                                    $hasDiscount = $game && $game->has_discount && $game->discount_percent > 0;
+                                                                    $originalPrice = $hasDiscount ? $game->price : null;
+                                                                    $discountPercent = $hasDiscount ? $game->discount_percent : 0;
                                                                     $unitPrice = $item->unit_price;
                                                                     $subtotal = $item->subtotal;
                                                                 @endphp
-                                                                <tr style="border-bottom: 1px solid rgba(99, 102, 241, 0.05);">
+                                                                <tr style="border-bottom: 1px solid rgba(99, 102, 241, 0.1);">
                                                                     <td style="padding: 12px;">
                                                                         <div class="d-flex align-items-center">
-                                                                            <div class="flex-shrink-0 me-3">
-                                                                                <div style="width: 45px; height: 45px; border-radius: 10px; overflow: hidden; background: #1e293b;">
+                                                                            <div class="me-3">
+                                                                                <div style="width: 50px; height: 50px; border-radius: 10px; overflow: hidden; background: #1e293b;">
                                                                                     @if($game && $game->image_path)
                                                                                         <img src="{{ asset('storage/' . $game->image_path) }}" 
                                                                                              alt="{{ $game->name }}"
                                                                                              style="width: 100%; height: 100%; object-fit: cover;">
                                                                                     @else
                                                                                         <div class="d-flex align-items-center justify-content-center h-100">
-                                                                                            <i class="bi bi-controller" style="color: #22d3ee;"></i>
+                                                                                            <i class="bi bi-controller" style="color: #22d3ee; font-size: 1.5rem;"></i>
                                                                                         </div>
                                                                                     @endif
                                                                                 </div>
                                                                             </div>
                                                                             <div>
-                                                                                <span style="color: #e2e8f0; font-weight: 600;">
-                                                                                    {{ $game ? $game->name : 'Juego no disponible' }}
-                                                                                </span>
+                                                                                <span style="color: #e2e8f0; font-weight: 600;">{{ $game ? $game->name : 'Juego no disponible' }}</span>
                                                                                 @if($hasDiscount)
                                                                                     <div class="mt-1">
-                                                                                        <span class="badge" style="
-                                                                                            background: rgba(239, 68, 68, 0.2);
-                                                                                            color: #fecaca;
-                                                                                            font-size: 0.7rem;
-                                                                                        ">
-                                                                                            -{{ $discountPercent }}% OFF
+                                                                                        <span class="badge" style="background: rgba(239,68,68,0.2); color: #fecaca; font-size: 0.7rem;">
+                                                                                            🔥 -{{ $discountPercent }}% OFF
                                                                                         </span>
                                                                                     </div>
                                                                                 @endif
@@ -242,103 +258,108 @@
                                                                         </div>
                                                                     </td>
                                                                     <td style="text-align: center; padding: 12px; vertical-align: middle;">
-                                                                        <span class="badge" style="
-                                                                            background: rgba(34, 211, 238, 0.2);
-                                                                            color: #22d3ee;
-                                                                            padding: 6px 12px;
-                                                                            border-radius: 20px;
-                                                                        ">
-                                                                            {{ $item->quantity }}
+                                                                        <span class="badge" style="background: rgba(34,211,238,0.2); color: #22d3ee; padding: 5px 12px; border-radius: 20px;">
+                                                                            ✕ {{ $item->quantity }}
                                                                         </span>
                                                                     </td>
                                                                     <td style="text-align: right; padding: 12px; vertical-align: middle;">
                                                                         @if($hasDiscount)
-                                                                            <div class="d-flex flex-column align-items-end">
-                                                                                <small style="color: #94a3b8; font-size: 0.75rem; text-decoration: line-through;">
-                                                                                    ${{ number_format($originalPrice, 2) }}
-                                                                                </small>
-                                                                                <span style="color: #22d3ee; font-weight: 600;">
-                                                                                    ${{ number_format($unitPrice, 2) }}
-                                                                                </span>
+                                                                            <div>
+                                                                                <small style="color: #94a3b8; text-decoration: line-through; display: block;">${{ number_format($originalPrice, 2) }}</small>
+                                                                                <span style="color: #22d3ee; font-weight: 600;">${{ number_format($unitPrice, 2) }}</span>
                                                                             </div>
                                                                         @else
-                                                                            <span style="color: #22d3ee; font-weight: 600;">
-                                                                                ${{ number_format($unitPrice, 2) }}
-                                                                            </span>
+                                                                            <span style="color: #22d3ee; font-weight: 600;">${{ number_format($unitPrice, 2) }}</span>
                                                                         @endif
                                                                     </td>
                                                                     <td style="text-align: right; padding: 12px; vertical-align: middle;">
-                                                                        @if($hasDiscount)
-                                                                            <div class="d-flex flex-column align-items-end">
-                                                                                <small style="color: #94a3b8; font-size: 0.75rem; text-decoration: line-through;">
-                                                                                    ${{ number_format($originalPrice * $item->quantity, 2) }}
-                                                                                </small>
-                                                                                <span style="color: #22d3ee; font-weight: 700; font-size: 1rem;">
-                                                                                    ${{ number_format($subtotal, 2) }}
-                                                                                </span>
-                                                                            </div>
-                                                                        @else
-                                                                            <span style="color: #22d3ee; font-weight: 700; font-size: 1rem;">
-                                                                                ${{ number_format($subtotal, 2) }}
-                                                                            </span>
-                                                                        @endif
+                                                                        <span style="color: #22d3ee; font-weight: 700;">${{ number_format($subtotal, 2) }}</span>
                                                                     </td>
                                                                 </tr>
                                                                 @endforeach
                                                             </tbody>
                                                             <tfoot>
-                                                                <tr style="border-top: 1px solid rgba(99, 102, 241, 0.2); background: rgba(34, 211, 238, 0.05);">
-                                                                    <td colspan="3" style="text-align: right; padding: 15px;">
-                                                                        <strong style="color: #e2e8f0; font-size: 1.1rem;">TOTAL:</strong>
+                                                                <tr style="background: rgba(34, 211, 238, 0.05); border-top: 2px solid rgba(34, 211, 238, 0.3);">
+                                                                    <td colspan="3" style="text-align: right; padding: 12px;">
+                                                                        <strong style="color: #e2e8f0;">TOTAL:</strong>
                                                                     </td>
-                                                                    <td style="text-align: right; padding: 15px;">
-                                                                        <span style="
-                                                                            background: linear-gradient(45deg, #22d3ee, #6366f1);
-                                                                            -webkit-background-clip: text;
-                                                                            background-clip: text;
-                                                                            color: transparent;
-                                                                            font-weight: 900;
-                                                                            font-size: 1.3rem;
-                                                                        ">
-                                                                            ${{ number_format($order->total_amount, 2) }}
-                                                                        </span>
+                                                                    <td style="text-align: right; padding: 12px;">
+                                                                        <strong style="color: #22d3ee; font-size: 1.2rem;">${{ number_format($order->total_amount, 2) }}</strong>
                                                                     </td>
                                                                 </tr>
                                                             </tfoot>
                                                         </table>
                                                     </div>
+                                                </div>
 
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <h6 style="color: #22c55e; margin-bottom: 10px;">
-                                                                <i class="bi bi-person me-2"></i> FACTURACIÓN
+                                                {{-- ===================================================== --}}
+                                                {{-- 👤 INFORMACIÓN DEL CLIENTE --}}
+                                                {{-- ===================================================== --}}
+                                                <div class="row mb-4">
+                                                    <div class="col-md-6">
+                                                        <div class="info-section" style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 12px;">
+                                                            <h6 style="color: #22c55e; margin-bottom: 12px;">
+                                                                <i class="bi bi-person-circle me-2"></i> FACTURACIÓN
                                                             </h6>
-                                                            <div style="background: rgba(15, 23, 42, 0.4); padding: 12px; border-radius: 10px;">
+                                                            <div class="ps-3">
                                                                 <p class="mb-1" style="color: #e2e8f0;"><strong>{{ $order->billing_name }}</strong></p>
-                                                                <p class="mb-1" style="color: #94a3b8;">{{ $order->billing_email }}</p>
+                                                                <p class="mb-1" style="color: #94a3b8;"><i class="bi bi-envelope me-2"></i>{{ $order->billing_email }}</p>
                                                                 @if($order->billing_phone)
-                                                                    <p class="mb-0" style="color: #94a3b8;">{{ $order->billing_phone }}</p>
+                                                                    <p class="mb-0" style="color: #94a3b8;"><i class="bi bi-telephone me-2"></i>{{ $order->billing_phone }}</p>
+                                                                @endif
+                                                                @if($order->billing_address)
+                                                                    <p class="mb-0 mt-2" style="color: #94a3b8;"><i class="bi bi-geo-alt me-2"></i>{{ $order->billing_address }}</p>
                                                                 @endif
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6">
-                                                            <h6 style="color: #a855f7; margin-bottom: 10px;">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="info-section" style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 12px;">
+                                                            <h6 style="color: #a855f7; margin-bottom: 12px;">
                                                                 <i class="bi bi-credit-card me-2"></i> MÉTODO DE PAGO
                                                             </h6>
-                                                            <div style="background: rgba(15, 23, 42, 0.4); padding: 12px; border-radius: 10px;">
+                                                            <div class="ps-3">
                                                                 @if($order->payment_method == 'credit_card')
                                                                     <p class="mb-0" style="color: #e2e8f0;">
-                                                                        <i class="bi bi-credit-card me-2"></i> Tarjeta de Crédito/Débito
+                                                                        <i class="bi bi-credit-card-2-front me-2"></i> Tarjeta de Crédito/Débito
                                                                     </p>
                                                                 @else
                                                                     <p class="mb-0" style="color: #e2e8f0;">
                                                                         <i class="bi bi-bank me-2"></i> Transferencia Bancaria
                                                                     </p>
                                                                 @endif
+                                                                @if($order->transaction_reference)
+                                                                    <p class="mb-0 mt-2" style="color: #94a3b8; font-size: 0.85rem;">
+                                                                        <i class="bi bi-upc-scan me-2"></i>Ref: {{ $order->transaction_reference }}
+                                                                    </p>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                {{-- ===================================================== --}}
+                                                {{-- 🔽 BOTÓN DESCARGAR TICKET --}}
+                                                {{-- ===================================================== --}}
+                                                <div class="text-center mt-3">
+                                                    <a href="{{ route('order.ticket', $order->order_number) }}" 
+                                                       class="btn" 
+                                                       style="
+                                                            background: linear-gradient(45deg, #22d3ee, #6366f1);
+                                                            border: none;
+                                                            color: #0f172a;
+                                                            font-weight: 600;
+                                                            padding: 10px 30px;
+                                                            border-radius: 8px;
+                                                            transition: all 0.3s ease;
+                                                            display: inline-flex;
+                                                            align-items: center;
+                                                            gap: 8px;
+                                                       ">
+                                                        <i class="bi bi-file-pdf-fill"></i> DESCARGAR TICKET PDF
+                                                    </a>
+                                                </div>
+
                                             </td>
                                         </tr>
                                     @endforeach
@@ -417,6 +438,16 @@
         --bs-pagination-disabled-bg: rgba(15, 23, 42, 0.5);
     }
     
+    /* Efecto hover en info-box */
+    .info-box {
+        transition: all 0.3s ease;
+    }
+    
+    .info-box:hover {
+        transform: translateY(-2px);
+        background: rgba(34, 211, 238, 0.1) !important;
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
         .gaming-font {
@@ -429,6 +460,10 @@
         
         .badge {
             font-size: 0.7rem !important;
+        }
+        
+        .info-box {
+            margin-bottom: 10px;
         }
     }
 </style>

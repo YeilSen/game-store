@@ -1,4 +1,4 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 
 @section('content')
 <div class="container mt-4">
@@ -38,6 +38,99 @@
         </div>
     @endif
 
+    {{-- ===================================================== --}}
+    {{-- 🔥 CARRUSEL DE JUEGOS CON DESCUENTOS (CON AUTOPLAY) --}}
+    {{-- ===================================================== --}}
+    @php
+        $discountGames = $games->where('has_discount', true)->where('status', 'available')->take(10);
+    @endphp
+    
+    @if($discountGames->count() > 0)
+    <div class="discount-section mb-5 fade-in">
+        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="discount-badge-header">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <span>OFERTAS ESPECIALES</span>
+                </div>
+                <div class="discount-timer">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Ofertas por tiempo limitado</span>
+                </div>
+            </div>
+            <a href="#ofertas" class="view-all-link" onclick="document.querySelector('.categories-bar').scrollIntoView({behavior: 'smooth'});">
+                Ver todas <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="position-relative">
+            <div class="discount-carousel-container">
+                <button class="carousel-nav prev-btn" id="prevDiscount">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <div class="discount-carousel" id="discountCarousel">
+                    <div class="carousel-track" id="discountTrack">
+                        @foreach($discountGames as $game)
+                            <div class="discount-card" data-category="{{ $game->category }}">
+                                <div class="discount-badge">-{{ $game->discount_percent }}% OFF</div>
+                                <img src="{{ asset('storage/' . $game->image_path) }}" 
+                                     alt="{{ $game->name }}" 
+                                     class="discount-img">
+                                <div class="discount-info">
+                                    <h5>{{ $game->name }}</h5>
+                                    <div class="price-container">
+                                        <span class="original-price">${{ number_format($game->price, 2) }}</span>
+                                        <span class="discount-price">${{ number_format($game->final_price, 2) }}</span>
+                                    </div>
+                                    <button class="add-to-cart-discount" 
+                                            data-id="{{ $game->id }}" 
+                                            data-name="{{ $game->name }}" 
+                                            data-price="{{ $game->final_price }}">
+                                        <i class="bi bi-cart-plus"></i> Añadir al carrito
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <button class="carousel-nav next-btn" id="nextDiscount">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- ===================================================== --}}
+    {{-- 🔥 BARRA DE CATEGORÍAS (FILTRO RÁPIDO) --}}
+    {{-- ===================================================== --}}
+    <div class="categories-bar mb-5 fade-in">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-tags-fill" style="color: #22d3ee; font-size: 1.5rem;"></i>
+                <span class="gaming-font fw-bold" style="color: #22d3ee;">Categorías:</span>
+            </div>
+            <div class="d-flex flex-wrap gap-2" id="categoryFilter">
+                <button class="category-btn active" data-category="all">
+                    <i class="bi bi-grid-3x3-gap-fill me-1"></i> Todos
+                </button>
+                @php
+                    // 🔥 CORREGIDO: Mostrar TODAS las categorías de TODOS los juegos
+                    $uniqueCategories = $games->pluck('category')->unique()->filter()->values();
+                @endphp
+                @foreach($uniqueCategories as $cat)
+                    <button class="category-btn" data-category="{{ $cat }}">
+                        <i class="bi bi-tag me-1"></i> {{ ucfirst($cat) }}
+                    </button>
+                @endforeach
+            </div>
+            <div class="games-count" style="color: #94a3b8; font-size: 0.85rem;">
+                <i class="bi bi-controller me-1"></i> 
+                <span id="gameCount">{{ $games->count() }}</span> juegos
+            </div>
+        </div>
+    </div>
+
     {{-- Botones de administración --}}
     @auth
         @if(Auth::user()->is_admin)
@@ -71,9 +164,10 @@
     @endauth
 
     {{-- Grid de juegos --}}
-    <div class="row g-4">
+    <div class="row g-4" id="gamesGrid">
+        {{-- 🔥 CORREGIDO: Mostrar TODOS los juegos sin filtrar por status --}}
         @forelse ($games as $game)
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 game-item" data-category="{{ $game->category }}" data-name="{{ $game->name }}" data-price="{{ $game->has_discount ? $game->final_price : $game->price }}">
                 <div class="card h-100 shadow-sm" style="
                     background: rgba(15, 23, 42, 0.7);
                     backdrop-filter: blur(10px);
@@ -94,7 +188,7 @@
                                 opacity: 0.5;
                              "></div>
                         
-                        {{-- 🔥 NUEVO: Mostrar estado en la imagen --}}
+                        {{-- Mostrar estado en la imagen --}}
                         @if($game->status == 'out_of_stock')
                             <div class="position-absolute top-0 start-0 m-3">
                                 <span class="badge" style="background: rgba(239, 68, 68, 0.9); color: white; padding: 5px 10px; border-radius: 6px;">
@@ -111,7 +205,7 @@
                     </div>
                     
                     <div class="card-body d-flex flex-column p-4">
-                        {{-- 🔥 NUEVO: Categoría --}}
+                        {{-- Categoría --}}
                         @if($game->category)
                             <div class="mb-2">
                                 <span class="badge" style="
@@ -144,7 +238,7 @@
                             {{ Str::limit($game->description, 100) }}
                         </p>
                         
-                        {{-- 🔥 NUEVO: Precio con descuento --}}
+                        {{-- Precio con descuento --}}
                         <div class="mb-4">
                             @if($game->has_discount)
                                 <div class="d-flex align-items-center justify-content-between">
@@ -188,7 +282,7 @@
                             @endif
                         </div>
                         
-                        {{-- 🔥 NUEVO: Botones de Admin (dentro de cada juego) --}}
+                        {{-- Botones de Admin (dentro de cada juego) --}}
                         @auth
                             @if(Auth::user()->is_admin)
                                 <div class="d-flex gap-2 mb-3">
@@ -307,6 +401,219 @@
 </div>
 
 <style>
+    /* ===================================================== */
+    /* 🔥 ESTILOS PARA EL CARRUSEL DE DESCUENTOS */
+    /* ===================================================== */
+    .discount-section {
+        background: linear-gradient(135deg, rgba(34, 211, 238, 0.05), rgba(168, 85, 247, 0.05));
+        border-radius: 24px;
+        padding: 20px;
+        border: 1px solid rgba(34, 211, 238, 0.2);
+    }
+    
+    .discount-badge-header {
+        background: linear-gradient(45deg, #22d3ee, #a855f7);
+        padding: 8px 20px;
+        border-radius: 30px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        color: #0f172a;
+        font-family: 'Orbitron', sans-serif;
+        animation: pulse 2s infinite;
+    }
+    
+    .discount-timer {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 8px 16px;
+        border-radius: 30px;
+        color: #fbbf24;
+        font-size: 0.85rem;
+    }
+    
+    .view-all-link {
+        color: #22d3ee;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .view-all-link:hover {
+        color: #a5f3fc;
+        transform: translateX(5px);
+    }
+    
+    .discount-carousel-container {
+        position: relative;
+        margin: 20px 0;
+    }
+    
+    .discount-carousel {
+        overflow: hidden;
+        border-radius: 16px;
+    }
+    
+    .carousel-track {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        gap: 20px;
+    }
+    
+    .discount-card {
+        flex: 0 0 280px;
+        background: rgba(10, 10, 20, 0.8);
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .discount-card:hover {
+        transform: translateY(-5px);
+        border-color: #22d3ee;
+        box-shadow: 0 10px 30px rgba(34, 211, 238, 0.2);
+    }
+    
+    .discount-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #ef4444, #dc2626);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        color: white;
+        z-index: 1;
+    }
+    
+    .discount-img {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+    }
+    
+    .discount-info {
+        padding: 15px;
+    }
+    
+    .discount-info h5 {
+        color: white;
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .price-container {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    
+    .original-price {
+        color: #94a3b8;
+        text-decoration: line-through;
+        font-size: 0.85rem;
+    }
+    
+    .discount-price {
+        color: #22d3ee;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    
+    .add-to-cart-discount {
+        width: 100%;
+        background: rgba(34, 211, 238, 0.1);
+        border: 1px solid rgba(34, 211, 238, 0.3);
+        border-radius: 8px;
+        padding: 8px;
+        color: #22d3ee;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .add-to-cart-discount:hover {
+        background: rgba(34, 211, 238, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(34, 211, 238, 0.5);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #22d3ee;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+    
+    .carousel-nav:hover {
+        background: rgba(34, 211, 238, 0.2);
+        transform: translateY(-50%) scale(1.1);
+    }
+    
+    .prev-btn {
+        left: -20px;
+    }
+    
+    .next-btn {
+        right: -20px;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+    
+    /* ===================================================== */
+    /* 🔥 ESTILOS PARA LA BARRA DE CATEGORÍAS */
+    /* ===================================================== */
+    .categories-bar {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        border-radius: 50px;
+        padding: 12px 24px;
+        margin-bottom: 30px;
+    }
+    
+    .category-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        border-radius: 30px;
+        padding: 8px 18px;
+        color: #cbd5e1;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .category-btn:hover {
+        background: rgba(34, 211, 238, 0.2);
+        border-color: #22d3ee;
+        color: #22d3ee;
+        transform: translateY(-2px);
+    }
+    
+    .category-btn.active {
+        background: linear-gradient(45deg, #22d3ee, #6366f1);
+        border-color: transparent;
+        color: #0f172a;
+        box-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
+    }
+    
     /* Efectos hover para las cards */
     .card {
         transition: all 0.3s ease !important;
@@ -370,43 +677,240 @@
         }
     }
     
-    .col-md-4 {
-        animation: fadeIn 0.5s ease-out forwards;
-        opacity: 0;
+    .fade-in {
+        animation: fadeIn 0.5s ease-out;
     }
     
-    .col-md-4:nth-child(1) { animation-delay: 0.1s; }
-    .col-md-4:nth-child(2) { animation-delay: 0.2s; }
-    .col-md-4:nth-child(3) { animation-delay: 0.3s; }
-    .col-md-4:nth-child(4) { animation-delay: 0.4s; }
-    .col-md-4:nth-child(5) { animation-delay: 0.5s; }
-    .col-md-4:nth-child(6) { animation-delay: 0.6s; }
+    .game-item {
+        transition: all 0.3s ease;
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    .game-item.hidden-category {
+        display: none !important;
+    }
+    
+    /* Mensaje de filtro */
+    .filter-message {
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    @media (max-width: 768px) {
+        .categories-bar {
+            border-radius: 20px;
+        }
+        
+        .category-btn {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+        
+        .carousel-nav {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .prev-btn {
+            left: -10px;
+        }
+        
+        .next-btn {
+            right: -10px;
+        }
+        
+        .discount-card {
+            flex: 0 0 240px;
+        }
+        
+        .discount-img {
+            height: 240px;
+        }
+    }
 </style>
 
 <script>
-    // Efecto hover mejorado para las cards
+    // =====================================================
+    // 🔥 CARRUSEL DE DESCUENTOS CON AUTOPLAY
+    // =====================================================
     document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('.card');
+        const track = document.getElementById('discountTrack');
+        const prevBtn = document.getElementById('prevDiscount');
+        const nextBtn = document.getElementById('nextDiscount');
         
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px)';
+        if (track && prevBtn && nextBtn && track.children.length > 0) {
+            let currentIndex = 0;
+            let autoPlayInterval;
+            const cards = track.children;
+            const cardWidth = cards[0]?.offsetWidth + 20 || 300;
+            const carouselContainer = document.querySelector('.discount-carousel');
+            const visibleCards = Math.floor(carouselContainer?.offsetWidth / cardWidth) || 3;
+            const maxIndex = Math.max(0, cards.length - visibleCards);
+            
+            function updateCarousel() {
+                track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+            }
+            
+            function nextSlide() {
+                if (currentIndex < maxIndex) {
+                    currentIndex++;
+                    updateCarousel();
+                } else {
+                    currentIndex = 0;
+                    updateCarousel();
+                }
+            }
+            
+            function prevSlide() {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarousel();
+                } else {
+                    currentIndex = maxIndex;
+                    updateCarousel();
+                }
+            }
+            
+            function startAutoPlay() {
+                if (autoPlayInterval) clearInterval(autoPlayInterval);
+                autoPlayInterval = setInterval(nextSlide, 4000);
+            }
+            
+            function stopAutoPlay() {
+                if (autoPlayInterval) {
+                    clearInterval(autoPlayInterval);
+                    autoPlayInterval = null;
+                }
+            }
+            
+            prevBtn.addEventListener('click', function() {
+                stopAutoPlay();
+                prevSlide();
+                startAutoPlay();
             });
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
+            nextBtn.addEventListener('click', function() {
+                stopAutoPlay();
+                nextSlide();
+                startAutoPlay();
+            });
+            
+            const carouselContainerDiv = document.querySelector('.discount-carousel-container');
+            if (carouselContainerDiv) {
+                carouselContainerDiv.addEventListener('mouseenter', stopAutoPlay);
+                carouselContainerDiv.addEventListener('mouseleave', startAutoPlay);
+            }
+            
+            startAutoPlay();
+            
+            window.addEventListener('resize', function() {
+                const newCardWidth = cards[0]?.offsetWidth + 20 || 300;
+                const newVisibleCards = Math.floor(carouselContainer?.offsetWidth / newCardWidth) || 3;
+                const newMaxIndex = Math.max(0, cards.length - newVisibleCards);
+                if (currentIndex > newMaxIndex) {
+                    currentIndex = newMaxIndex;
+                    updateCarousel();
+                }
+            });
+        }
+    });
+    
+    // =====================================================
+    // 🔥 FILTRO POR CATEGORÍAS
+    // =====================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const gameItems = document.querySelectorAll('.game-item');
+        const gameCountSpan = document.getElementById('gameCount');
+        const gamesGrid = document.getElementById('gamesGrid');
+        
+        function updateGameCount() {
+            const visibleGames = document.querySelectorAll('.game-item:not(.hidden-category)');
+            if (gameCountSpan) {
+                gameCountSpan.textContent = visibleGames.length;
+            }
+        }
+        
+        function showFilterMessage(category) {
+            const oldMsg = document.querySelector('.filter-message');
+            if (oldMsg) oldMsg.remove();
+            
+            const visibleGames = document.querySelectorAll('.game-item:not(.hidden-category)');
+            
+            if (visibleGames.length === 0 && gamesGrid) {
+                const msg = document.createElement('div');
+                msg.className = 'filter-message text-center py-5 w-100';
+                msg.style.gridColumn = '1 / -1';
+                msg.innerHTML = `
+                    <div class="mb-4" style="font-size: 3rem; color: rgba(99, 102, 241, 0.3);">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h4 style="color: #cbd5e1;">No hay juegos en la categoría "${category}"</h4>
+                    <p style="color: #94a3b8;">Prueba con otra categoría</p>
+                `;
+                gamesGrid.appendChild(msg);
+            }
+        }
+        
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                const categoryName = this.textContent.trim().replace(/[^\w\s]/g, '');
+                
+                gameItems.forEach(item => {
+                    const itemCategory = item.getAttribute('data-category');
+                    
+                    if (category === 'all' || itemCategory === category) {
+                        item.classList.remove('hidden-category');
+                        item.style.animation = 'none';
+                        setTimeout(() => {
+                            item.style.animation = 'fadeIn 0.5s ease-out forwards';
+                        }, 10);
+                    } else {
+                        item.classList.add('hidden-category');
+                    }
+                });
+                
+                updateGameCount();
+                
+                if (category !== 'all') {
+                    showFilterMessage(categoryName);
+                } else {
+                    const oldMsg = document.querySelector('.filter-message');
+                    if (oldMsg) oldMsg.remove();
+                }
             });
         });
         
-        // Efecto para botones
-        const buttons = document.querySelectorAll('.btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-            });
-            
-            btn.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
+        updateGameCount();
+    });
+    
+    // =====================================================
+    // 🔥 AÑADIR AL CARRITO (DESDE CARRUSEL)
+    // =====================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        const discountButtons = document.querySelectorAll('.add-to-cart-discount');
+        
+        discountButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const gameId = this.getAttribute('data-id');
+                if (gameId) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '{{ url("/cart/add") }}/' + gameId;
+                    
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfInput);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
             });
         });
     });

@@ -1099,5 +1099,59 @@
             checkCookieConsent();
         });
     </script>
+
+    {{-- ===================================================== --}}
+    {{-- 🔥 PROTECCIÓN DE FLECHAS DEL NAVEGADOR (SOLO DASHBOARD) --}}
+    {{-- ===================================================== --}}
+    <script>
+        // Protección simple que NO interfiere con los dropdowns
+        (function() {
+            // Verificar si estamos en el dashboard
+            const isDashboard = window.location.pathname === '/dashboard' || window.location.pathname === '/home';
+            
+            @auth
+                if (isDashboard) {
+                    // Agregar una entrada al historial
+                    history.pushState(null, null, location.href);
+                    
+                    // Manejar el botón atrás
+                    window.addEventListener('popstate', function() {
+                        // Redirigir de vuelta al dashboard
+                        location.href = '{{ route("dashboard") }}';
+                    });
+                }
+            @endauth
+            
+            // Prevenir acceso después de cerrar sesión
+            @guest
+                const wasLoggedIn = sessionStorage.getItem('rayonic_auth') === 'true';
+                const logoutTime = sessionStorage.getItem('rayonic_logout_time');
+                const timeSinceLogout = logoutTime ? Date.now() - parseInt(logoutTime) : 9999;
+                
+                if (wasLoggedIn && timeSinceLogout < 3000) {
+                    sessionStorage.removeItem('rayonic_auth');
+                    sessionStorage.removeItem('rayonic_logout_time');
+                    
+                    const protectedPages = ['/dashboard', '/cart', '/profile', '/checkout', '/admin'];
+                    if (protectedPages.some(p => window.location.pathname.includes(p))) {
+                        window.location.replace('{{ route("login") }}');
+                    }
+                }
+            @endauth
+            
+            // Guardar estado de autenticación
+            @auth
+                sessionStorage.setItem('rayonic_auth', 'true');
+            @endauth
+            
+            // Guardar tiempo de logout cuando se cierra sesión
+            document.addEventListener('click', function(e) {
+                const logoutBtn = e.target.closest('#logout-form button, form[action*="logout"] button');
+                if (logoutBtn) {
+                    sessionStorage.setItem('rayonic_logout_time', Date.now().toString());
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

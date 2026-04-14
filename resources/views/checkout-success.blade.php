@@ -220,6 +220,41 @@
                 </div>
             </div>
 
+            {{-- 👇 👇 👇 BOTONES DEL TICKET PDF - AGREGAR AQUÍ 👇 👇 👇 --}}
+            <div class="text-center mb-4">
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    {{-- Botón Descargar PDF --}}
+                    <a href="{{ route('order.ticket', $order->order_number) }}" 
+                       class="btn" 
+                       style="
+                            background: linear-gradient(45deg, #22d3ee, #6366f1);
+                            border: none;
+                            color: #0f172a;
+                            font-weight: 700;
+                            padding: 12px 30px;
+                            border-radius: 12px;
+                            letter-spacing: 1px;
+                       ">
+                        <i class="bi bi-file-pdf me-2"></i> DESCARGAR TICKET PDF
+                    </a>
+                    
+                    {{-- Botón Ver Ticket (opcional) --}}
+                    <a href="{{ route('order.preview', $order->order_number) }}" 
+                       class="btn" 
+                       style="
+                            background: rgba(34, 211, 238, 0.1);
+                            border: 2px solid #22d3ee;
+                            color: #22d3ee;
+                            font-weight: 700;
+                            padding: 12px 30px;
+                            border-radius: 12px;
+                            letter-spacing: 1px;
+                       ">
+                        <i class="bi bi-eye me-2"></i> VER TICKET
+                    </a>
+                </div>
+            </div>
+
             <div class="text-center">
                 <a href="{{ route('catalog') }}" class="btn gaming-font" style="
                     background: linear-gradient(45deg, #22d3ee, #6366f1);

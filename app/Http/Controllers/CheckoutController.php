@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf; // 👈 AGREGAR ESTA LÍNEA AL INICIO
 
 class CheckoutController extends Controller
 {
@@ -116,7 +117,7 @@ class CheckoutController extends Controller
             $order = Order::create([
                 'order_number' => $orderNumber,
                 'user_id' => Auth::id(),
-                'total_amount' => $total, // Este es el total CON descuentos
+                'total_amount' => $total,
                 'status' => 'completed',
                 'payment_method' => $request->payment_method,
                 'payment_status' => 'paid',
@@ -176,6 +177,63 @@ class CheckoutController extends Controller
         session()->forget('cart');
             
         return view('checkout-success', compact('order'));
+    }
+    
+    // 👇 👇 👇 NUEVOS MÉTODOS PARA TICKET PDF (AGREGAR AL FINAL) 👇 👇 👇
+    
+    // Generar ticket PDF de la orden
+    public function downloadTicket($orderNumber)
+    {
+        $order = Order::where('order_number', $orderNumber)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+        
+        $order->load('items.game');
+        
+        $subtotal = $order->items->sum('subtotal');
+        $tax = $subtotal * 0.16;
+        
+        $data = [
+            'order' => $order,
+            'user' => $order->user,
+            'date' => now()->format('d/m/Y H:i:s'),
+            'ticket_number' => $order->order_number,
+            'items' => $order->items,
+            'subtotal' => $subtotal,
+            'tax' => $tax,
+            'total' => $order->total_amount
+        ];
+        
+        $pdf = Pdf::loadView('pdf.ticket', $data);
+        $pdf->setPaper([0, 0, 226.77, 600], 'portrait');
+        
+        return $pdf->download('ticket-' . $order->order_number . '.pdf');
+    }
+    
+    // Vista previa del ticket en navegador
+    public function previewTicket($orderNumber)
+    {
+        $order = Order::where('order_number', $orderNumber)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+        
+        $order->load('items.game');
+        
+        $subtotal = $order->items->sum('subtotal');
+        $tax = $subtotal * 0.16;
+        
+        $data = [
+            'order' => $order,
+            'user' => $order->user,
+            'date' => now()->format('d/m/Y H:i:s'),
+            'ticket_number' => $order->order_number,
+            'items' => $order->items,
+            'subtotal' => $subtotal,
+            'tax' => $tax,
+            'total' => $order->total_amount
+        ];
+        
+        return view('pdf.ticket', $data);
     }
     
     // Método privado para determinar marca de tarjeta

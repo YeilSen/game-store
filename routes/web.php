@@ -7,7 +7,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GameController; 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController; 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\PDFController; // 👈 AGREGAR ESTA LÍNEA
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,11 @@ Route::middleware('auth')->group(function () {
 
     // Historial de compras del usuario
     Route::get('/profile/orders', [App\Http\Controllers\ProfileController::class, 'orders'])->name('profile.orders');
+
+    // 👇 👇 👇 AGREGAR ESTAS RUTAS PARA EL TICKET PDF 👇 👇 👇
+    // Ticket PDF (dentro del grupo auth)
+    Route::get('/order/{id}/ticket', [PDFController::class, 'generateTicket'])->name('order.ticket');
+    Route::get('/order/{id}/preview', [PDFController::class, 'previewTicket'])->name('order.preview');
 });
 
 /*
@@ -76,7 +82,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/bans', [BanController::class, 'index'])->name('bans.index');
     Route::post('/bans/unban', [BanController::class, 'unban'])->name('bans.unban');
 
-    // 🔥 PEDIDOS (CORREGIDO - SIN DUPLICADOS)
+    // Pedidos
     Route::get('/orders', [AdminController::class, 'allOrders'])->name('orders.index');
     Route::get('/users/{id}/orders', [AdminController::class, 'userOrders'])->name('users.orders');
 });
