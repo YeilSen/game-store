@@ -23,7 +23,7 @@ COPY composer.json composer.lock ./
 RUN composer validate
 
 # Instalar dependencias
-RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
+RUN composer install -vvv --no-interaction --no-dev --prefer-dist
 
 COPY . .
 
