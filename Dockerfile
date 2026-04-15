@@ -2,22 +2,32 @@ FROM php:8.2-cli
 
 WORKDIR /app
 
-# Instalar dependencias del sistema
+# Dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
-    curl
+    curl \
+    libzip-dev \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev
 
-# Instalar Composer
+# Extensiones PHP necesarias para Laravel
+RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath
+
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiar proyecto
+# Copiar archivos primero (IMPORTANTE)
+COPY composer.json composer.lock ./
+
+# Instalar dependencias PHP
+RUN composer install --no-interaction --no-dev --optimize-autoloader
+
+# Copiar el resto del proyecto
 COPY . .
 
-# Instalar dependencias PHP (🔥 ESTE ES EL ERROR QUE TE FALTA)
-RUN composer install --no-dev --optimize-autoloader
-
-# Permisos (importante en Laravel)
+# Permisos Laravel
 RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 10000
