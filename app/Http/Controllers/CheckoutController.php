@@ -55,17 +55,22 @@ class CheckoutController extends Controller
     // Procesar el pago
     public function processPayment(Request $request)
     {
+        // 🔐 VALIDACIÓN DE SESIÓN (ESTA ES LA CLAVE)
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión para pagar');
+        }
+
         // DEPURACIÓN
         Log::info('=== INICIO PROCESAMIENTO PAGO ===');
         Log::info('Datos recibidos:', $request->all());
-        
+
         $cart = session('cart', []);
         Log::info('Carrito:', $cart);
-        
+
         if (empty($cart)) {
             return redirect()->route('cart.index')->with('error', 'Tu carrito está vacío.');
         }
-        
+
         $request->validate([
             'payment_method' => 'required|in:credit_card,bank_transfer',
             'billing_name' => 'required|string|max:255',
@@ -73,47 +78,38 @@ class CheckoutController extends Controller
             'billing_phone' => 'nullable|string|max:20',
             'billing_address' => 'nullable|string',
         ]);
-        
+
         DB::beginTransaction();
-        
+
         try {
-            // Calcular total con precios CON descuento
             $total = 0;
             $items = [];
-            
+
             foreach ($cart as $gameId => $item) {
                 $game = Game::find($gameId);
+
                 if (!$game) {
                     throw new \Exception("El juego con ID {$gameId} no existe.");
                 }
-                
-                // Verificar que el juego esté disponible
+
                 if ($game->trashed() || $game->status != 'available') {
-                    throw new \Exception("El juego {$game->name} no está disponible para compra.");
+                    throw new \Exception("El juego {$game->name} no está disponible.");
                 }
-                
-                // Calcular precio final con descuento (usar el precio del carrito que ya está actualizado)
-                $finalPrice = $item['price']; // El precio ya viene con descuento del showCheckout
+
+                $finalPrice = $item['price'];
                 $subtotal = $finalPrice * $item['quantity'];
                 $total += $subtotal;
-                
+
                 $items[] = [
                     'game_id' => $gameId,
                     'quantity' => $item['quantity'],
                     'unit_price' => $finalPrice,
-                    'original_price' => $game->price,
-                    'subtotal' => $subtotal,
-                    'has_discount' => $game->has_discount,
-                    'discount_percent' => $game->discount_percent ?? 0
+                    'subtotal' => $subtotal
                 ];
             }
-            
-            Log::info('Total calculado CON descuentos: ' . $total);
-            
-            // Crear número de orden manualmente
+
             $orderNumber = 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
-            
-            // Crear la orden (con el total CORRECTO con descuentos)
+
             $order = Order::create([
                 'order_number' => $orderNumber,
                 'user_id' => Auth::id(),
@@ -127,10 +123,7 @@ class CheckoutController extends Controller
                 'billing_address' => $request->billing_address,
                 'notes' => $request->notes,
             ]);
-            
-            Log::info('Orden creada ID: ' . $order->id . ' - Número: ' . $order->order_number . ' - Total: $' . $total);
-            
-            // Crear items de la orden
+
             foreach ($items as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
@@ -140,27 +133,19 @@ class CheckoutController extends Controller
                     'subtotal' => $item['subtotal']
                 ]);
             }
-            
-            Log::info('Items creados: ' . count($items));
-            
-            // Limpiar carrito
+
             session()->forget('cart');
-            
+
             DB::commit();
-            
-            Log::info('Pago exitoso, redirigiendo a éxito');
-            
+
             return redirect()->route('checkout.success', ['order' => $order->order_number])
-                ->with('success', '¡Pago procesado exitosamente!');
+                ->with('success', '¡Pago exitoso!');
                 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error en checkout: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-            
+
             return redirect()->back()
-                ->with('error', 'Error al procesar el pago: ' . $e->getMessage())
-                ->withInput();
+                ->with('error', 'Error al procesar el pago: ' . $e->getMessage());
         }
     }
     
@@ -258,4 +243,5 @@ class CheckoutController extends Controller
         
         return 'Desconocida';
     }
+
 }

@@ -96,6 +96,11 @@ Route::get('/cookies-policy', function () {
     return view('cookies-policy');
 })->name('cookies-policy');
 
+//RUTA PAGO
+Route::post('/checkout/process', [CheckoutController::class, 'processPayment'])
+    ->name('checkout.process')
+    ->middleware('auth');
+
 /*
 |--------------------------------------------------------------------------
 | RUTAS DE AUTENTICACIÓN
