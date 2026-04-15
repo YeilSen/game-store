@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
 
-# Instalar dependencias de Laravel
-RUN composer install --no-dev --optimize-autoloader
+# 👇 CLAVE: sin scripts
+RUN composer install --no-dev --no-scripts --optimize-autoloader
 
 EXPOSE 10000
 
