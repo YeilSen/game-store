@@ -2,4 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [GameController::class, 'index.php']);
+Route::get('/', function () {
+    return view('index.php'); // o tu vista real
+});
