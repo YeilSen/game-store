@@ -170,6 +170,7 @@
                 max-width: 33.333333%;
                 padding: 0 15px;
                 margin-bottom: 30px;
+                box-sizing: border-box;
             ">
                 <div class="card" style="
                     background: rgba(15, 23, 42, 0.7);
@@ -633,12 +634,32 @@
         box-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
     }
     
+    /* ===================================================== */
+    /* 🔥 ESTILOS PARA EL GRID Y FILTRO */
+    /* ===================================================== */
+    #gamesGrid {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        margin: 0 -15px !important;
+    }
+    
     .game-item {
+        flex: 0 0 33.333333% !important;
+        max-width: 33.333333% !important;
+        padding: 0 15px !important;
+        margin-bottom: 30px !important;
+        box-sizing: border-box !important;
         transition: all 0.3s ease;
     }
     
     .game-item.hidden-category {
         display: none !important;
+    }
+    
+    .filter-message {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 50px 0 !important;
     }
     
     /* Responsive */
@@ -774,7 +795,7 @@
     });
     
     // =====================================================
-    // 🔥 FILTRO POR CATEGORÍAS
+    // 🔥 FILTRO POR CATEGORÍAS (CORREGIDO)
     // =====================================================
     document.addEventListener('DOMContentLoaded', function() {
         const categoryBtns = document.querySelectorAll('.category-btn');
@@ -797,10 +818,7 @@
             
             if (visibleGames.length === 0 && gamesGrid) {
                 const msg = document.createElement('div');
-                msg.className = 'filter-message text-center py-5 w-100';
-                msg.style.width = '100%';
-                msg.style.textAlign = 'center';
-                msg.style.padding = '50px 0';
+                msg.className = 'filter-message';
                 msg.innerHTML = `
                     <div style="font-size: 3rem; color: rgba(99, 102, 241, 0.3); margin-bottom: 20px;">
                         <i class="bi bi-search"></i>
@@ -818,17 +836,14 @@
                 this.classList.add('active');
                 
                 const category = this.getAttribute('data-category');
-                const categoryName = this.textContent.trim().replace(/[^\w\s]/g, '');
+                let categoryName = this.textContent.trim();
+                categoryName = categoryName.replace(/[^\w\s]/g, '');
                 
                 gameItems.forEach(item => {
                     const itemCategory = item.getAttribute('data-category');
                     
                     if (category === 'all' || itemCategory === category) {
                         item.classList.remove('hidden-category');
-                        item.style.animation = 'none';
-                        setTimeout(() => {
-                            item.style.animation = 'fadeIn 0.5s ease-out forwards';
-                        }, 10);
                     } else {
                         item.classList.add('hidden-category');
                     }
