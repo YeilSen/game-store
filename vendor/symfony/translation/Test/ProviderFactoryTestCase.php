@@ -11,24 +11,25 @@
 
 namespace Symfony\Component\Translation\Test;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\Translation\Dumper\XliffFileDumper;
 use Symfony\Component\Translation\Loader\LoaderInterface;
-use Symfony\Component\Translation\Provider\ProviderInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * A test case to ease testing a translation provider.
+ * A test case to ease testing a translation provider factory.
  *
  * @author Mathieu Santostefano <msantostefano@protonmail.com>
+ *
+ * @deprecated since Symfony 7.2, use AbstractProviderFactoryTestCase instead
  */
-abstract class ProviderTestCase extends TestCase
+abstract class ProviderFactoryTestCase extends AbstractProviderFactoryTestCase
 {
+    use IncompleteDsnTestTrait;
+
     protected HttpClientInterface $client;
     protected LoggerInterface|MockObject $logger;
     protected string $defaultLocale;
@@ -36,30 +37,25 @@ abstract class ProviderTestCase extends TestCase
     protected XliffFileDumper|MockObject $xliffFileDumper;
     protected TranslatorBagInterface|MockObject $translatorBag;
 
-    abstract public static function createProvider(HttpClientInterface $client, LoaderInterface $loader, LoggerInterface $logger, string $defaultLocale, string $endpoint): ProviderInterface;
-
     /**
-     * @return iterable<array{0: ProviderInterface, 1: string}>
+     * @return iterable<array{0: string, 1?: string|null}>
      */
-    abstract public static function toStringProvider(): iterable;
-
-    /**
-     * @dataProvider toStringProvider
-     */
-    #[DataProvider('toStringProvider')]
-    public function testToString(ProviderInterface $provider, string $expected)
+    public static function unsupportedSchemeProvider(): iterable
     {
-        $this->assertSame($expected, (string) $provider);
+        return [];
     }
 
-    protected function getClient(): MockHttpClient
+    /**
+     * @return iterable<array{0: string, 1?: string|null}>
+     */
+    public static function incompleteDsnProvider(): iterable
+    {
+        return [];
+    }
+
+    protected function getClient(): HttpClientInterface
     {
         return $this->client ??= new MockHttpClient();
-    }
-
-    protected function getLoader(): LoaderInterface
-    {
-        return $this->loader ??= $this->createMock(LoaderInterface::class);
     }
 
     protected function getLogger(): LoggerInterface
@@ -70,6 +66,11 @@ abstract class ProviderTestCase extends TestCase
     protected function getDefaultLocale(): string
     {
         return $this->defaultLocale ??= 'en';
+    }
+
+    protected function getLoader(): LoaderInterface
+    {
+        return $this->loader ??= $this->createMock(LoaderInterface::class);
     }
 
     protected function getXliffFileDumper(): XliffFileDumper
