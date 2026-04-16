@@ -12,11 +12,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN composer install --no-dev --optimize-autoloader
 
-# 🔥 LIMPIAR CONFIGURACIÓN (CLAVE)
+# 🔥 SOLO ESTO
 RUN php artisan config:clear
-RUN php artisan cache:clear
-RUN php artisan route:clear
-RUN php artisan view:clear
 
 EXPOSE 10000
 
