@@ -101,7 +101,7 @@
             transform: translateY(-1px);
         }
         
-        /* 🔥 ESTILOS UNIFORMES PARA TODOS LOS BOTONES */
+        /* ESTILOS UNIFORMES PARA TODOS LOS BOTONES */
         .nav-link {
             color: #e2e8f0 !important;
             font-weight: 500;
@@ -145,7 +145,7 @@
             background: rgba(251, 191, 36, 0.2);
         }
         
-        /* 🔥 BOTÓN DE INICIO (mismo estilo que los demás) */
+        /* BOTON DE INICIO */
         .home-btn {
             background: rgba(34, 211, 238, 0.1);
             border: 1px solid rgba(34, 211, 238, 0.3);
@@ -169,7 +169,7 @@
             border-color: rgba(34, 211, 238, 0.5);
         }
         
-        /* 🔥 RELOJ */
+        /* RELOJ */
         .clock {
             background: rgba(15, 23, 42, 0.8);
             border: 1px solid rgba(34, 211, 238, 0.3);
@@ -192,7 +192,7 @@
             font-size: 0.9rem;
         }
         
-        /* 🔥 CONTENEDOR DEL RELOJ Y BOTÓN INICIO */
+        /* CONTENEDOR DEL RELOJ Y BOTON INICIO */
         .clock-container {
             display: flex;
             align-items: center;
@@ -200,7 +200,7 @@
             margin-left: 20px;
         }
         
-        /* 🔥 NAVBAR CENTRADO */
+        /* NAVBAR CENTRADO */
         .navbar .container {
             display: flex;
             align-items: center;
@@ -369,7 +369,7 @@
             }
         }
         
-        /* ANIMACIÓN DE ENTRADA PARA ELEMENTOS */
+        /* ANIMACION DE ENTRADA PARA ELEMENTOS */
         .fade-in {
             animation: fadeIn 0.5s ease-out;
         }
@@ -391,7 +391,7 @@
     <div class="glow-effect glow-cyan"></div>
     <div class="glow-effect glow-purple"></div>
     
-    {{-- BARRA DE NAVEGACIÓN --}}
+    {{-- BARRA DE NAVEGACION --}}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fade-in">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
@@ -404,7 +404,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('catalog') }}">
-                            <i class="bi bi-grid"></i> Catálogo
+                            <i class="bi bi-grid"></i> Catalogo
                         </a>
                     </li>
                     
@@ -446,7 +446,7 @@
                     @endauth
                 </ul>
 
-                {{-- 🔥 BOTÓN INICIO Y RELOJ --}}
+                {{-- BOTON INICIO Y RELOJ --}}
                 <div class="clock-container">
                     <a href="{{ route('dashboard') }}" class="home-btn">
                         <i class="bi bi-house-door-fill"></i>
@@ -459,13 +459,13 @@
                     </div>
                 </div>
 
-                {{-- RUTAS DE AUTENTICACIÓN Y PERFIL --}}
+                {{-- RUTAS DE AUTENTICACION Y PERFIL --}}
                 <ul class="navbar-nav">
                     @guest
                         @if (Route::has('login'))
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">
-                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesion
                                 </a>
                             </li>
                         @endif
@@ -493,7 +493,7 @@
                                     <form method="POST" action="{{ route('logout') }}" id="logout-form">
                                         @csrf
                                         <button class="dropdown-item" type="submit">
-                                            <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+                                            <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesion
                                         </button>
                                     </form>
                                 </li>
@@ -517,7 +517,7 @@
     
     <script>
         // =====================================================
-        // 🔥 ANIMACIONES DEL NAVBAR
+        // ANIMACIONES DEL NAVBAR
         // =====================================================
         document.addEventListener('DOMContentLoaded', function() {
             const navLinks = document.querySelectorAll('.nav-link');
@@ -527,7 +527,7 @@
         });
 
         // =====================================================
-        // 🔥 RELOJ EN TIEMPO REAL
+        // RELOJ EN TIEMPO REAL
         // =====================================================
         function updateClock() {
             const now = new Date();
@@ -537,7 +537,7 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const timeString = `${hours}:${minutes}:${seconds}`;
             
-            const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
             const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
             
             const dayName = days[now.getDay()];
@@ -557,13 +557,11 @@
         setInterval(updateClock, 1000);
 
         // =====================================================
-        // 🔥 PROTECCIÓN CONTRA DOBLE CLIC - VERSIÓN COMPLETA
+        // PROTECCION CONTRA DOBLE CLIC
         // =====================================================
         document.addEventListener('DOMContentLoaded', function() {
             
-            // =====================================================
-            // 1️⃣ PROTEGER FORMULARIOS (EXCLUIR LOGOUT)
-            // =====================================================
+            // Proteger formularios (excluir logout)
             const forms = document.querySelectorAll('form:not(#logout-form)');
             
             forms.forEach(form => {
@@ -604,9 +602,7 @@
                 });
             });
             
-            // =====================================================
-            // 2️⃣ PROTEGER ENLACES PELIGROSOS
-            // =====================================================
+            // Proteger enlaces peligrosos
             const dangerousLinks = document.querySelectorAll('a[onclick*="confirm"], a.delete-link, .btn-danger, [data-confirm]');
             
             dangerousLinks.forEach(link => {
@@ -628,9 +624,7 @@
                 });
             });
             
-            // =====================================================
-            // 3️⃣ PROTEGER ENLACES DE NAVEGACIÓN
-            // =====================================================
+            // Proteger enlaces de navegacion
             const navButtons = document.querySelectorAll('a.nav-link:not(.dropdown-toggle), .home-btn');
             
             navButtons.forEach(button => {
@@ -655,9 +649,7 @@
                 });
             });
             
-            // =====================================================
-            // 4️⃣ PROTEGER TODOS LOS BOTONES .btn Y ENLACES COMUNES
-            // =====================================================
+            // Proteger todos los botones .btn y enlaces comunes
             const allActionButtons = document.querySelectorAll('.btn, a.btn, button:not([type="submit"]):not(.dropdown-toggle)');
             
             allActionButtons.forEach(button => {
@@ -703,7 +695,7 @@
         });
 
         // =====================================================
-        // 🔥 FUNCIONES GLOBALES
+        // FUNCIONES GLOBALES
         // =====================================================
         window.enableSubmitButtons = function(formId) {
             const form = document.getElementById(formId);
@@ -790,7 +782,7 @@
     </style>
 
     {{-- ===================================================== --}}
-    {{-- 🍪 AVISO DE COOKIES --}}
+    {{-- AVISO DE COOKIES --}}
     {{-- ===================================================== --}}
     <div id="cookieConsent" class="cookie-consent" style="display: none;">
         <div class="cookie-content">
@@ -798,14 +790,14 @@
                 <i class="bi bi-cookie"></i>
             </div>
             <div class="cookie-text">
-                <h4>🍪 Aviso de Cookies</h4>
-                <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, realizar análisis y mostrarte contenido personalizado.</p>
+                <h4>Aviso de Cookies</h4>
+                <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, realizar analisis y mostrarte contenido personalizado.</p>
                 <p class="cookie-small">Al hacer clic en "Aceptar", consientes el uso de TODAS las cookies.</p>
             </div>
             <div class="cookie-buttons">
                 <button id="acceptCookies" class="cookie-btn accept">Aceptar</button>
                 <button id="declineCookies" class="cookie-btn decline">Rechazar</button>
-                <a href="{{ url('/cookies-policy') }}" class="cookie-link">Más información</a>
+                <a href="{{ url('/cookies-policy') }}" class="cookie-link">Mas informacion</a>
             </div>
         </div>
     </div>
@@ -950,7 +942,7 @@
 
     <script>
         // =====================================================
-        // 🔥 GESTIÓN DE COOKIES
+        // GESTION DE COOKIES
         // =====================================================
         document.addEventListener('DOMContentLoaded', function() {
             const cookieConsent = document.getElementById('cookieConsent');
@@ -987,7 +979,7 @@
                 localStorage.setItem('cookies_accepted', 'true');
                 localStorage.removeItem('cookies_declined');
                 cookieConsent.style.display = 'none';
-                showToast('✅ Has aceptado las cookies', 'success');
+                showToast('Has aceptado las cookies', 'success');
                 
                 setTimeout(() => {
                     isProcessingCookie = false;
@@ -1012,7 +1004,7 @@
                 localStorage.setItem('cookies_declined', 'true');
                 localStorage.removeItem('cookies_accepted');
                 cookieConsent.style.display = 'none';
-                showToast('ℹ️ Solo se usarán cookies esenciales', 'info');
+                showToast('Solo se usaran cookies esenciales', 'info');
                 
                 setTimeout(() => {
                     isProcessingCookie = false;
@@ -1077,21 +1069,6 @@
                 }, 3000);
             }
             
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInRight {
-                    from {
-                        transform: translateX(100px);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
             if (acceptBtn) acceptBtn.addEventListener('click', acceptCookies);
             if (declineBtn) declineBtn.addEventListener('click', declineCookies);
             if (cookieLink) cookieLink.addEventListener('click', handleCookieLink);
@@ -1101,10 +1078,10 @@
     </script>
 
     {{-- ===================================================== --}}
-    {{-- 🔥 PROTECCIÓN DE FLECHAS DEL NAVEGADOR (SOLO DASHBOARD) --}}
+    {{-- PROTECCION DE FLECHAS DEL NAVEGADOR (SOLO DASHBOARD) --}}
     {{-- ===================================================== --}}
     <script>
-        // Protección simple que NO interfiere con los dropdowns
+        // Proteccion simple que NO interfiere con los dropdowns
         (function() {
             // Verificar si estamos en el dashboard
             const isDashboard = window.location.pathname === '/dashboard' || window.location.pathname === '/home';
@@ -1114,7 +1091,7 @@
                     // Agregar una entrada al historial
                     history.pushState(null, null, location.href);
                     
-                    // Manejar el botón atrás
+                    // Manejar el boton atras
                     window.addEventListener('popstate', function() {
                         // Redirigir de vuelta al dashboard
                         location.href = '{{ route("dashboard") }}';
@@ -1122,7 +1099,7 @@
                 }
             @endauth
             
-            // Prevenir acceso después de cerrar sesión
+            // Prevenir acceso despues de cerrar sesion
             @guest
                 const wasLoggedIn = sessionStorage.getItem('rayonic_auth') === 'true';
                 const logoutTime = sessionStorage.getItem('rayonic_logout_time');
@@ -1139,12 +1116,12 @@
                 }
             @endauth
             
-            // Guardar estado de autenticación
+            // Guardar estado de autenticacion
             @auth
                 sessionStorage.setItem('rayonic_auth', 'true');
             @endauth
             
-            // Guardar tiempo de logout cuando se cierra sesión
+            // Guardar tiempo de logout cuando se cierra sesion
             document.addEventListener('click', function(e) {
                 const logoutBtn = e.target.closest('#logout-form button, form[action*="logout"] button');
                 if (logoutBtn) {
@@ -1153,5 +1130,95 @@
             });
         })();
     </script>
+
+    {{-- ===================================================== --}}
+    {{-- 🔥 PREVENIR PAGO DESPUÉS DE LOGOUT (FLECHA ATRÁS) --}}
+    {{-- ===================================================== --}}
+    <script>
+        // Verificar cada vez que la página se carga (incluyendo cuando viene de caché)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                checkSessionAndRedirect();
+            }
+        });
+        
+        // Verificar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSessionAndRedirect();
+        });
+        
+        function checkSessionAndRedirect() {
+            const isCheckoutPage = window.location.pathname.includes('/checkout');
+            const isSuccessPage = window.location.pathname.includes('/checkout/success');
+            
+            if (isCheckoutPage || isSuccessPage) {
+                fetch('/session/check', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.authenticated) {
+                        showSessionExpiredMessage();
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 2000);
+                    }
+                })
+                .catch(() => {
+                    showSessionExpiredMessage();
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                });
+            }
+        }
+        
+        function showSessionExpiredMessage() {
+            const message = document.createElement('div');
+            message.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(135deg, #dc2626, #ef4444);
+                color: white;
+                padding: 25px 40px;
+                border-radius: 16px;
+                z-index: 100000;
+                text-align: center;
+                font-family: 'Orbitron', sans-serif;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                animation: fadeIn 0.3s ease-out;
+            `;
+            message.innerHTML = `
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+                <h3>Sesión Expirada</h3>
+                <p>Tu sesión ha expirado. Serás redirigido al inicio de sesión.</p>
+                <div class="spinner-border mt-3" role="status"></div>
+            `;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                if (message && message.parentNode) message.remove();
+            }, 2000);
+        }
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+    </style>
+
 </body>
 </html>

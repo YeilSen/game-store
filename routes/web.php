@@ -8,7 +8,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\PDFController; // 👈 AGREGAR ESTA LÍNEA
+use App\Http\Controllers\PDFController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,10 +32,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     
-    // Checkout y pagos
-    Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout');
-    Route::post('/checkout/process', [CheckoutController::class, 'processPayment'])->name('checkout.process');
-    Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+    // Checkout y pagos CON protección de sesión activa
+    Route::middleware('check.session')->group(function () {
+        Route::get('/checkout', [CheckoutController::class, 'showCheckout'])->name('checkout');
+        Route::post('/checkout/process', [CheckoutController::class, 'processPayment'])->name('checkout.process');
+        Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+    });
 
     // Perfil de usuario 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -50,8 +52,7 @@ Route::middleware('auth')->group(function () {
     // Historial de compras del usuario
     Route::get('/profile/orders', [App\Http\Controllers\ProfileController::class, 'orders'])->name('profile.orders');
 
-    // 👇 👇 👇 AGREGAR ESTAS RUTAS PARA EL TICKET PDF 👇 👇 👇
-    // Ticket PDF (dentro del grupo auth)
+    // Ticket PDF
     Route::get('/order/{id}/ticket', [PDFController::class, 'generateTicket'])->name('order.ticket');
     Route::get('/order/{id}/preview', [PDFController::class, 'previewTicket'])->name('order.preview');
 });
@@ -95,6 +96,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 Route::get('/cookies-policy', function () {
     return view('cookies-policy');
 })->name('cookies-policy');
+
+/*
+|--------------------------------------------------------------------------
+| RUTA PARA VERIFICAR SESIÓN (AJAX)
+|--------------------------------------------------------------------------
+*/
+Route::get('/session/check', function () {
+    return response()->json(['authenticated' => auth()->check()]);
+})->name('session.check');
 
 /*
 |--------------------------------------------------------------------------

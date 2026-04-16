@@ -122,7 +122,7 @@
                                                             border: 1px solid rgba(99, 102, 241, 0.3);
                                                             color: #ffffff;
                                                        ">
-                                                <label for="billing_phone" style="color: #94a3b8;">Teléfono (Máx 10 números)</label>
+                                                <label for="billing_phone" style="color: #94a3b8;">Teléfono (Opcional - 10 dígitos)</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
@@ -164,7 +164,7 @@
                                                         color: #ffffff;
                                                         letter-spacing: 1px;
                                                    ">
-                                            <label for="card_number" style="color: #94a3b8;">Número de Tarjeta (16 dígitos)</label>
+                                            <label for="card_number" style="color: #94a3b8;">Número de Tarjeta (16 dígitos) *</label>
                                         </div>
                                         <div class="card-icons mt-2">
                                             <i class="bi bi-cc-visa me-2" style="color: #6366f1; font-size: 1.5rem;"></i>
@@ -190,7 +190,7 @@
                                                         </option>
                                                     @endfor
                                                 </select>
-                                                <label for="card_exp_month" style="color: #94a3b8;">Mes</label>
+                                                <label for="card_exp_month" style="color: #94a3b8;">Mes *</label>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
@@ -210,7 +210,7 @@
                                                         </option>
                                                     @endfor
                                                 </select>
-                                                <label for="card_exp_year" style="color: #94a3b8;">Año</label>
+                                                <label for="card_exp_year" style="color: #94a3b8;">Año *</label>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-3">
@@ -227,7 +227,7 @@
                                                             border: 1px solid rgba(99, 102, 241, 0.3);
                                                             color: #ffffff;
                                                        ">
-                                                <label for="card_cvv" style="color: #94a3b8;">CVV (3 o 4 dígitos)</label>
+                                                <label for="card_cvv" style="color: #94a3b8;">CVV (3 o 4 dígitos) *</label>
                                             </div>
                                         </div>
                                     </div>
@@ -261,13 +261,12 @@
                                                    id="bank_name" 
                                                    name="bank_name"
                                                    placeholder="Nombre del Banco"
-                                                   onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32"
                                                    style="
                                                         background: rgba(30, 41, 59, 0.8);
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="bank_name" style="color: #94a3b8;">Nombre del Banco</label>
+                                            <label for="bank_name" style="color: #94a3b8;">Nombre del Banco *</label>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -284,7 +283,7 @@
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="account_number" style="color: #94a3b8;">Número de Cuenta</label>
+                                            <label for="account_number" style="color: #94a3b8;">Número de Cuenta (10-20 dígitos) *</label>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -299,7 +298,7 @@
                                                         border: 1px solid rgba(99, 102, 241, 0.3);
                                                         color: #ffffff;
                                                    ">
-                                            <label for="transaction_reference" style="color: #94a3b8;">Referencia de Transferencia</label>
+                                            <label for="transaction_reference" style="color: #94a3b8;">Referencia de Transferencia *</label>
                                         </div>
                                     </div>
                                 </div>
@@ -323,7 +322,7 @@
 
                                 {{-- Botón de pago --}}
                                 <div class="mt-4">
-                                    <button type="submit" class="btn w-100 gaming-font" id="pay-button" style="
+                                    <button type="button" class="btn w-100 gaming-font" id="pay-button" style="
                                         background: linear-gradient(45deg, #22d3ee, #6366f1, #a855f7);
                                         background-size: 200% 200%;
                                         border: none;
@@ -348,7 +347,7 @@
                     </div>
                 </div>
 
-                {{-- Resumen del pedido ACTUALIZADO con descuentos --}}
+                {{-- Resumen del pedido --}}
                 <div class="col-lg-4">
                     <div class="card mb-4" style="
                         background: rgba(10, 15, 28, 0.95);
@@ -497,6 +496,18 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 25px rgba(34, 211, 238, 0.4) !important;
     }
+    
+    .field-error {
+        color: #ef4444;
+        font-size: 0.75rem;
+        margin-top: 5px;
+        display: block;
+    }
+    
+    .error-border {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25) !important;
+    }
 </style>
 
 <script>
@@ -536,23 +547,64 @@
             });
         }
         
-        // =====================================================
-        // 🔥 ENVÍO DEL FORMULARIO - CORREGIDO
-        // =====================================================
-        if (form && payButton) {
-            let isSubmitting = false;
+        // Función para mostrar error
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            if (!field) return;
             
-            form.addEventListener('submit', function(e) {
-                // Evitar múltiples envíos
-                if (isSubmitting) {
+            const existingError = field.parentElement?.querySelector('.field-error');
+            if (existingError) existingError.remove();
+            
+            field.classList.add('error-border');
+            
+            const errorSpan = document.createElement('small');
+            errorSpan.className = 'field-error';
+            errorSpan.innerText = message;
+            field.parentElement?.appendChild(errorSpan);
+            
+            field.focus();
+        }
+        
+        function clearError(fieldId) {
+            const field = document.getElementById(fieldId);
+            if (!field) return;
+            field.classList.remove('error-border');
+            const existingError = field.parentElement?.querySelector('.field-error');
+            if (existingError) existingError.remove();
+        }
+        
+        function clearAllErrors() {
+            const fields = ['billing_name', 'billing_email', 'billing_phone', 'card_number', 'card_exp_month', 'card_exp_year', 'card_cvv', 'bank_name', 'account_number', 'transaction_reference'];
+            fields.forEach(field => clearError(field));
+        }
+        
+        // Limpiar errores al escribir
+        document.getElementById('billing_name')?.addEventListener('input', () => clearError('billing_name'));
+        document.getElementById('billing_email')?.addEventListener('input', () => clearError('billing_email'));
+        document.getElementById('billing_phone')?.addEventListener('input', () => clearError('billing_phone'));
+        document.getElementById('card_number')?.addEventListener('input', () => clearError('card_number'));
+        document.getElementById('card_cvv')?.addEventListener('input', () => clearError('card_cvv'));
+        document.getElementById('bank_name')?.addEventListener('input', () => clearError('bank_name'));
+        document.getElementById('account_number')?.addEventListener('input', () => clearError('account_number'));
+        document.getElementById('transaction_reference')?.addEventListener('input', () => clearError('transaction_reference'));
+        document.getElementById('card_exp_month')?.addEventListener('change', () => clearError('card_exp_month'));
+        document.getElementById('card_exp_year')?.addEventListener('change', () => clearError('card_exp_year'));
+        
+        // =====================================================
+        // VALIDACIÓN AL HACER CLIC EN EL BOTÓN DE PAGO
+        // =====================================================
+        if (payButton) {
+            payButton.addEventListener('click', function(e) {
+                // Prevenir envío múltiple
+                if (this.disabled) {
                     e.preventDefault();
                     return false;
                 }
                 
-                const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+                clearAllErrors();
                 
+                const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
                 if (!paymentMethod) {
-                    e.preventDefault();
                     alert('❌ Selecciona un método de pago');
                     return false;
                 }
@@ -560,28 +612,98 @@
                 // Validar nombre
                 const name = document.getElementById('billing_name')?.value.trim() || '';
                 if (name === '') {
-                    e.preventDefault();
-                    alert('❌ Ingresa tu nombre completo');
+                    showError('billing_name', 'El nombre completo es obligatorio');
+                    return false;
+                }
+                if (name.length < 3) {
+                    showError('billing_name', 'El nombre debe tener al menos 3 caracteres');
                     return false;
                 }
                 
                 // Validar email
                 const email = document.getElementById('billing_email')?.value.trim() || '';
-                if (email === '' || !email.includes('@')) {
-                    e.preventDefault();
-                    alert('❌ Ingresa un correo electrónico válido');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (email === '' || !emailRegex.test(email)) {
+                    showError('billing_email', 'Ingresa un correo electrónico válido');
                     return false;
                 }
                 
-                // Marcar como enviando
-                isSubmitting = true;
+                // Validar teléfono (opcional)
+                const phone = document.getElementById('billing_phone')?.value.trim() || '';
+                if (phone !== '' && !/^\d{10}$/.test(phone)) {
+                    showError('billing_phone', 'El teléfono debe tener 10 dígitos');
+                    return false;
+                }
                 
-                // Cambiar texto del botón (NO deshabilitar)
-                payButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> PROCESANDO PAGO...';
-                payButton.style.opacity = '0.8';
+                // =====================================================
+                // VALIDACIÓN TARJETA DE CRÉDITO
+                // =====================================================
+                if (paymentMethod.value === 'credit_card') {
+                    const cardNumber = document.getElementById('card_number')?.value.replace(/\s/g, '') || '';
+                    if (cardNumber === '' || cardNumber.length !== 16 || !/^\d+$/.test(cardNumber)) {
+                        showError('card_number', 'Número de tarjeta inválido (16 dígitos)');
+                        return false;
+                    }
+                    
+                    const expMonth = document.getElementById('card_exp_month')?.value || '';
+                    if (expMonth === '' || expMonth === 'MM') {
+                        showError('card_exp_month', 'Selecciona el mes');
+                        return false;
+                    }
+                    
+                    const expYear = document.getElementById('card_exp_year')?.value || '';
+                    if (expYear === '' || expYear === 'AAAA') {
+                        showError('card_exp_year', 'Selecciona el año');
+                        return false;
+                    }
+                    
+                    const currentYear = new Date().getFullYear();
+                    const currentMonth = new Date().getMonth() + 1;
+                    const selectedYear = parseInt(expYear);
+                    const selectedMonth = parseInt(expMonth);
+                    
+                    if (selectedYear < currentYear || (selectedYear === currentYear && selectedMonth < currentMonth)) {
+                        showError('card_exp_month', 'La tarjeta está vencida');
+                        return false;
+                    }
+                    
+                    const cvv = document.getElementById('card_cvv')?.value || '';
+                    if (cvv === '' || cvv.length < 3 || cvv.length > 4 || !/^\d+$/.test(cvv)) {
+                        showError('card_cvv', 'CVV inválido (3 o 4 dígitos)');
+                        return false;
+                    }
+                }
                 
-                // El formulario se envía normalmente
-                return true;
+                // =====================================================
+                // VALIDACIÓN TRANSFERENCIA
+                // =====================================================
+                if (paymentMethod.value === 'bank_transfer') {
+                    const bankName = document.getElementById('bank_name')?.value.trim() || '';
+                    if (bankName === '') {
+                        showError('bank_name', 'Ingresa el nombre del banco');
+                        return false;
+                    }
+                    
+                    const accountNumber = document.getElementById('account_number')?.value.trim() || '';
+                    if (accountNumber === '' || accountNumber.length < 10 || accountNumber.length > 20 || !/^\d+$/.test(accountNumber)) {
+                        showError('account_number', 'Número de cuenta inválido (10-20 dígitos)');
+                        return false;
+                    }
+                    
+                    const transactionRef = document.getElementById('transaction_reference')?.value.trim() || '';
+                    if (transactionRef === '') {
+                        showError('transaction_reference', 'La referencia es obligatoria');
+                        return false;
+                    }
+                }
+                
+                // Si todo está bien, deshabilitar botón y enviar formulario
+                this.disabled = true;
+                this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> PROCESANDO PAGO...';
+                this.style.opacity = '0.8';
+                
+                // Enviar formulario
+                form.submit();
             });
         }
         
@@ -615,7 +737,6 @@
             });
         }
         
-        // CSS para ripple
         if (!document.querySelector('#ripple-style')) {
             const style = document.createElement('style');
             style.id = 'ripple-style';

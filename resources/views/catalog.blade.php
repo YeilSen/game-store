@@ -115,7 +115,6 @@
                     <i class="bi bi-grid-3x3-gap-fill me-1"></i> Todos
                 </button>
                 @php
-                    // 🔥 CORREGIDO: Mostrar TODAS las categorías de TODOS los juegos
                     $uniqueCategories = $games->pluck('category')->unique()->filter()->values();
                 @endphp
                 @foreach($uniqueCategories as $cat)
@@ -163,12 +162,16 @@
         @endif
     @endauth
 
-    {{-- Grid de juegos --}}
-    <div class="row g-4" id="gamesGrid">
-        {{-- 🔥 CORREGIDO: Mostrar TODOS los juegos sin filtrar por status --}}
+    {{-- Grid de juegos con flexbox forzado --}}
+    <div style="display: flex; flex-wrap: wrap; margin: 0 -15px;" id="gamesGrid">
         @forelse ($games as $game)
-            <div class="col-md-4 mb-4 game-item" data-category="{{ $game->category }}" data-name="{{ $game->name }}" data-price="{{ $game->has_discount ? $game->final_price : $game->price }}">
-                <div class="card h-100 shadow-sm" style="
+            <div class="game-item" data-category="{{ $game->category }}" data-name="{{ $game->name }}" data-price="{{ $game->has_discount ? $game->final_price : $game->price }}" style="
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+                padding: 0 15px;
+                margin-bottom: 30px;
+            ">
+                <div class="card" style="
                     background: rgba(15, 23, 42, 0.7);
                     backdrop-filter: blur(10px);
                     border: 1px solid rgba(99, 102, 241, 0.2);
@@ -176,6 +179,9 @@
                     overflow: hidden;
                     transition: all 0.3s ease;
                     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
                 ">
                     <div class="position-relative">
                         <img src="{{ asset('storage/' . $game->image_path) }}" 
@@ -188,7 +194,6 @@
                                 opacity: 0.5;
                              "></div>
                         
-                        {{-- Mostrar estado en la imagen --}}
                         @if($game->status == 'out_of_stock')
                             <div class="position-absolute top-0 start-0 m-3">
                                 <span class="badge" style="background: rgba(239, 68, 68, 0.9); color: white; padding: 5px 10px; border-radius: 6px;">
@@ -204,8 +209,12 @@
                         @endif
                     </div>
                     
-                    <div class="card-body d-flex flex-column p-4">
-                        {{-- Categoría --}}
+                    <div class="card-body" style="
+                        padding: 20px;
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                    ">
                         @if($game->category)
                             <div class="mb-2">
                                 <span class="badge" style="
@@ -226,24 +235,26 @@
                             font-weight: 700;
                             font-size: 1.2rem;
                             min-height: 3rem;
+                            margin: 0 0 12px 0;
                         ">
                             {{ $game->name }}
                         </h5>
                         
-                        <p class="card-text flex-grow-1 mb-3" style="
+                        <p class="card-text" style="
                             color: #94a3b8;
                             font-size: 0.9rem;
                             line-height: 1.5;
+                            margin-bottom: 16px;
+                            flex: 1;
                         ">
                             {{ Str::limit($game->description, 100) }}
                         </p>
                         
-                        {{-- Precio con descuento --}}
                         <div class="mb-4">
                             @if($game->has_discount)
-                                <div class="d-flex align-items-center justify-content-between">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div>
-                                        <span class="text-decoration-line-through text-muted me-2" style="color: #94a3b8 !important;">
+                                        <span style="text-decoration: line-through; color: #94a3b8; margin-right: 8px;">
                                             ${{ number_format($game->price, 2) }}
                                         </span>
                                         <span class="badge" style="
@@ -268,7 +279,7 @@
                                     </span>
                                 </div>
                             @else
-                                <p class="card-text mb-0" style="
+                                <p style="
                                     background: linear-gradient(45deg, #22d3ee, #6366f1);
                                     -webkit-background-clip: text;
                                     background-clip: text;
@@ -276,47 +287,47 @@
                                     font-weight: 800;
                                     font-size: 1.2rem;
                                     text-align: right;
+                                    margin: 0;
                                 ">
                                     <strong>${{ number_format($game->price, 2) }}</strong>
                                 </p>
                             @endif
                         </div>
                         
-                        {{-- Botones de Admin (dentro de cada juego) --}}
                         @auth
                             @if(Auth::user()->is_admin)
-                                <div class="d-flex gap-2 mb-3">
-                                    {{-- Botón Editar --}}
+                                <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
                                     <a href="{{ route('admin.games.edit', $game->id) }}" 
-                                       class="btn w-50" 
                                        style="
                                             background: linear-gradient(45deg, #22d3ee, #6366f1);
                                             border: none;
                                             color: #0f172a;
                                             font-weight: 600;
-                                            padding: 8px;
+                                            padding: 6px 12px;
                                             border-radius: 8px;
-                                            transition: all 0.3s ease;
-                                            font-size: 0.9rem;
-                                        ">
+                                            font-size: 0.8rem;
+                                            text-align: center;
+                                            text-decoration: none;
+                                            flex: 1;
+                                            display: inline-block;
+                                       ">
                                         <i class="bi bi-pencil-square me-1"></i> Editar
                                     </a>
                                     
-                                    {{-- Botón Eliminar --}}
-                                    <form action="{{ route('admin.games.delete', $game->id) }}" method="POST" class="w-50">
+                                    <form action="{{ route('admin.games.delete', $game->id) }}" method="POST" style="flex: 1;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
-                                                class="btn w-100" 
                                                 style="
                                                     background: rgba(239, 68, 68, 0.1);
                                                     border: 1px solid rgba(239, 68, 68, 0.3);
                                                     color: #fca5a5;
                                                     font-weight: 600;
-                                                    padding: 8px;
+                                                    padding: 6px 12px;
                                                     border-radius: 8px;
-                                                    transition: all 0.3s ease;
-                                                    font-size: 0.9rem;
+                                                    font-size: 0.8rem;
+                                                    width: 100%;
+                                                    cursor: pointer;
                                                 "
                                                 onclick="return confirm('¿Eliminar este juego?')">
                                             <i class="bi bi-trash me-1"></i> Eliminar
@@ -326,46 +337,51 @@
                             @endif
                         @endauth
                         
-                        {{-- Formulario para agregar al carrito --}}
                         @auth
                             @if($game->status == 'available')
-                                <form action="{{ route('cart.add', $game->id) }}" method="POST" class="mt-auto">
+                                <form action="{{ route('cart.add', $game->id) }}" method="POST" style="margin-top: auto;">
                                     @csrf
-                                    <button type="submit" class="btn w-100" style="
+                                    <button type="submit" style="
                                         background: linear-gradient(45deg, #10b981, #22c55e);
                                         border: none;
                                         color: white;
                                         font-weight: 600;
-                                        padding: 12px;
+                                        padding: 10px;
                                         border-radius: 8px;
+                                        width: 100%;
+                                        cursor: pointer;
                                         transition: all 0.3s ease;
-                                        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
                                     ">
                                         <i class="bi bi-cart-plus me-2"></i> Añadir al Carrito
                                     </button>
                                 </form>
                             @else
-                                <button class="btn w-100 mt-auto" disabled style="
+                                <button disabled style="
                                     background: rgba(100, 116, 139, 0.3);
                                     border: none;
                                     color: #94a3b8;
                                     font-weight: 600;
-                                    padding: 12px;
+                                    padding: 10px;
                                     border-radius: 8px;
+                                    width: 100%;
                                     cursor: not-allowed;
+                                    margin-top: auto;
                                 ">
                                     <i class="bi bi-cart-x me-2"></i> No disponible
                                 </button>
                             @endif
                         @else
-                            <a href="{{ route('login') }}" class="btn btn-outline-secondary w-100 mt-auto" style="
+                            <a href="{{ route('login') }}" style="
                                 background: transparent;
                                 border: 2px solid #22d3ee;
                                 color: #22d3ee;
                                 font-weight: 600;
-                                padding: 12px;
+                                padding: 10px;
                                 border-radius: 8px;
-                                transition: all 0.3s ease;
+                                text-align: center;
+                                text-decoration: none;
+                                display: block;
+                                margin-top: auto;
                             ">
                                 <i class="bi bi-box-arrow-in-right me-2"></i> Inicia Sesión
                             </a>
@@ -374,22 +390,24 @@
                 </div>
             </div>
         @empty
-            <div class="col-12 text-center py-5">
-                <div class="mb-4" style="font-size: 3rem; color: rgba(99, 102, 241, 0.3);">
+            <div style="width: 100%; text-align: center; padding: 50px 0;">
+                <div style="font-size: 3rem; color: rgba(99, 102, 241, 0.3); margin-bottom: 20px;">
                     <i class="bi bi-controller"></i>
                 </div>
-                <h4 class="mb-3" style="color: #cbd5e1;">
+                <h4 style="color: #cbd5e1; margin-bottom: 15px;">
                     No hay juegos disponibles en este momento.
                 </h4>
                 @auth
                     @if(Auth::user()->is_admin)
-                        <a href="{{ route('admin.games.create') }}" class="btn mt-3" style="
+                        <a href="{{ route('admin.games.create') }}" style="
                             background: linear-gradient(45deg, #22d3ee, #6366f1);
                             border: none;
                             color: #0f172a;
                             font-weight: 600;
                             padding: 10px 20px;
                             border-radius: 8px;
+                            text-decoration: none;
+                            display: inline-block;
                         ">
                             <i class="bi bi-plus-circle me-2"></i> Crear Primer Juego
                         </a>
@@ -533,6 +551,7 @@
         color: #22d3ee;
         font-weight: 500;
         transition: all 0.3s ease;
+        cursor: pointer;
     }
     
     .add-to-cart-discount:hover {
@@ -614,88 +633,21 @@
         box-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
     }
     
-    /* Efectos hover para las cards */
-    .card {
-        transition: all 0.3s ease !important;
-    }
-    
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 
-            0 15px 35px rgba(0, 0, 0, 0.3),
-            0 0 15px rgba(34, 211, 238, 0.1) !important;
-        border-color: rgba(34, 211, 238, 0.3) !important;
-    }
-    
-    /* Efectos para botones */
-    .btn {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease !important;
-    }
-    
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2) !important;
-    }
-    
-    /* Efecto de brillo en botones */
-    .btn::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -60%;
-        width: 20%;
-        height: 200%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: rotate(30deg);
-        transition: all 0.5s ease;
-        opacity: 0;
-    }
-    
-    .btn:hover::after {
-        left: 140%;
-        opacity: 1;
-    }
-    
-    /* Efecto para botón de login */
-    .btn-outline-secondary:hover {
-        background: rgba(34, 211, 238, 0.1) !important;
-        color: #22d3ee !important;
-        border-color: #22d3ee !important;
-    }
-    
-    /* Animación de entrada para las cards */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .fade-in {
-        animation: fadeIn 0.5s ease-out;
-    }
-    
     .game-item {
         transition: all 0.3s ease;
-        animation: fadeIn 0.5s ease-out forwards;
     }
     
     .game-item.hidden-category {
         display: none !important;
     }
     
-    /* Mensaje de filtro */
-    .filter-message {
-        animation: fadeIn 0.3s ease-out;
-    }
-    
+    /* Responsive */
     @media (max-width: 768px) {
+        .game-item {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
+        
         .categories-bar {
             border-radius: 20px;
         }
@@ -724,6 +676,13 @@
         
         .discount-img {
             height: 240px;
+        }
+    }
+    
+    @media (min-width: 769px) and (max-width: 992px) {
+        .game-item {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
         }
     }
 </style>
@@ -839,9 +798,11 @@
             if (visibleGames.length === 0 && gamesGrid) {
                 const msg = document.createElement('div');
                 msg.className = 'filter-message text-center py-5 w-100';
-                msg.style.gridColumn = '1 / -1';
+                msg.style.width = '100%';
+                msg.style.textAlign = 'center';
+                msg.style.padding = '50px 0';
                 msg.innerHTML = `
-                    <div class="mb-4" style="font-size: 3rem; color: rgba(99, 102, 241, 0.3);">
+                    <div style="font-size: 3rem; color: rgba(99, 102, 241, 0.3); margin-bottom: 20px;">
                         <i class="bi bi-search"></i>
                     </div>
                     <h4 style="color: #cbd5e1;">No hay juegos en la categoría "${category}"</h4>
@@ -914,5 +875,24 @@
             });
         });
     });
+    
+    // Animación fadeIn
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 @endsection

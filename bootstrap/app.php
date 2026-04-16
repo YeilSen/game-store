@@ -4,7 +4,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\IsAdmin; 
+use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\CheckActiveSession; // 👈 AGREGAR ESTA LÍNEA
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -33,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin' => IsAdmin::class,
+            'check.session' => CheckActiveSession::class, // 👈 AGREGAR ESTA LÍNEA
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
